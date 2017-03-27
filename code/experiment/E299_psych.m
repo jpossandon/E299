@@ -40,7 +40,7 @@ while contPsych
             tIntensity  = QuestQuantile(q(side(t)));
         else
 %             tIntensity  = 10.^(QuestMode(q)) + (10.^(QuestMode(q)+3.*QuestSd(q))-10.^(QuestMode(q))).*(2*rand(1)-1);
-            tIntensity  =   -1.4 + (-.7--1.4).*rand(1);
+            tIntensity  =   -1.4 + (-.7-(-1.4)).*rand(1);
         end
         
         PsychPortAudio('FillBuffer', pahandle, wave.tact.*10.^tIntensity);             % this takes less than 1 ms
@@ -89,6 +89,12 @@ end
  display(sprintf('\nLeft Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(1)),10.^(QuestMean(q(1))+QuestSd(q(1)))-10.^QuestMean(q(1))))
     display(sprintf('\nRight Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(2)),10.^(QuestMean(q(2))+QuestSd(q(2)))-10.^QuestMean(q(2))))
 E299_PsychCurve
-exp.intensitites = [QuestMean(q(1)) QuestMean(q(1))+.1 QuestMean(q(1))+.3
-                    QuestMean(q(2)) QuestMean(q(2))+.1 QuestMean(q(2))+.3];
+%%
+% intensities are threshold, and 3 and 6 dB of amplitude ratio (equal to
+% sqrt(2) and 2 the intensity). With raw amplitude values, formula is 
+% amplitued that gives xdB from reference amplitude is
+% 10.^(x/20+log10(ref)) and with already log transformed intensities is 
+% 10.^(x/20+ref)
+exp.intensitites = [QuestMean(q(1)) 10.^(3/20+QuestMean(q(1))) 10.^(6/20+QuestMean(q(1)));
+                    QuestMean(q(2)) 10.^(3/20+QuestMean(q(2))) 10.^(6/20+QuestMean(q(2)))];
 exp.psych_curve =1;
