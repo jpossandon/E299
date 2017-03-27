@@ -3,7 +3,7 @@
 % tactile stimulation; port 0 - 8 bits) and digital input (button boxes;
 % port 9 - last two bits
 
-display('\nSetting-up digital I/O card')
+display(sprintf('\nSetting-up digital I/O card'))
 DIO    = digitalio('nidaq','Dev1');                                        % control the DI/O nidaq card PCI 6509  
 lines  = addline(DIO,0:7,0,'Out');                                         % Output thorugh port 0 
 lines  = addline(DIO,6:7,9,'In');                                          %Input thorugh port 9, for button press 
@@ -34,4 +34,4 @@ wave.tact             = sin(2.*pi.*exp.sound.tact_freq.*...                 % th
 wave.tact(2,:)        = 0;                                                  % sound channel is stereo tactile stimulator is connected to 2nd channel, first channel can be used to give auditory feedback (not used here yet)
 display('\nDone.')
 
-input('\nPlease check that amplifier channels 1&2 are at intensity 5\n and that windows volume is at max\nPress any key to continue','s');
+input('\nPlease check that amplifier channels 1&2 are at intensity 7\n and that windows volume is at max\nPress Enter continue','s');

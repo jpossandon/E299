@@ -1,4 +1,4 @@
-function [exp,result,next_trial,sTtyp] = E299_initialize_subject(Ppath)
+function [exp,result,next_block] = E299_initialize_subject(Ppath)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % function E299_initialize_subject(Ppath)
@@ -7,7 +7,7 @@ function [exp,result,next_trial,sTtyp] = E299_initialize_subject(Ppath)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 sNstr           = input('\nSubject number: ','s');
-sTtyp           = 'legStim_handResp';
+sTtyp           = 'singleLH';
 Spath           = sprintf('%sdata%ss%s_%s',Ppath,filesep,sNstr,sTtyp);              % path to subject data folder
 
 % check wether subject folder exists and what does the experimenter want to do
@@ -47,13 +47,13 @@ else
 end
     
 if restart_flag                                                             % create folder an subject specific setting structure
-    display(sprintf('\n\nNew subject s%s,\n creating subject settings, result files and folder structure ...\n',sNstr,sTtyp))
+    display(sprintf('\n\nNew subject s%s task %s,\n creating subject settings, result files and folder structure ...\n',sNstr,sTtyp))
     mkdir(sprintf('%sdata%ss%s_%s',Ppath,filesep,sNstr,sTtyp))
-    if strcmp(sTtyp,'legStim_handResp')
+    if strcmp(sTtyp,'singleLH')
         exp.nBlocks             = 96;                                                   % total number of blocks
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
-        exp.maxRT               = 1.5;
-        exp.soa_fix             = .5;
+        exp.maxRT               = 2;
+        exp.soa_fix             = 1;
     else
         error(sprintf('Task %s does not exist',sTyp))
     end
@@ -61,9 +61,16 @@ if restart_flag                                                             % cr
     exp.sTtyp       = sTtyp;
     exp.created     = datestr(now);
     exp.Spath       = Spath;
-    save(sprintf('%s%ss%s_%s_settings.mat',Spath,filesep,sNstr,sTtyp),'exp');
+    exp.PC.tGuess      = -1;
+    exp.PC.tGuessSd    = 1;
+    exp.PC.pThreshold  = 0.82;
+    exp.PC.beta        = 3.5;
+    exp.PC.delta       = 0.02;
+    exp.PC.gamma       = 0.5;
+    save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'exp')
+%     save(sprintf('%s%ss%s_%s_settings.mat',Spath,filesep,sNstr,sTtyp),'exp');
     create_result   = 1;
-    psych_curveDone = 0;
+    exp.psych_curve = 0;
 end
 
 if cont_flag
@@ -106,8 +113,8 @@ if create_result == 1                                                       % cr
     result.trial_limbside     = [];                                         % 0 - left ; 1 - right (anatomical
     result.trial_int          = [];                                         % trial intensity (1 - threshold; 2 - threhsold +sd; 3 -  threhsold +sd)
     result.trial_randSOA      = [];
-    result.correct            = [];                                         % NaN - no response, 0 - incorrect, 1 correct
+    result.trial_correct            = [];                                         % NaN - no response, 0 - incorrect, 1 correct
     result.created            = datestr(now);
-    save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result')
+    save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result','-append')
     next_block = 1;
 end

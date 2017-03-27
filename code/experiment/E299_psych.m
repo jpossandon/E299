@@ -1,50 +1,54 @@
+function exp = E299_psych(exp,pahandle,DIO,wave)
 %%
 % first step get threshold
 % add opening of specs, move the parameters of the curve to exp structure
 % and the results of the theshold and sd
-display(sprintf('\nSearching psych data for subject %s',sNstr))
-if exist(sprintf('%s%ss%s_psychCurve.mat',Spath,filesep,sNstr))
-    load(sprintf('%s%ss%s_psychCurve.mat',Spath,filesep,sNstr),'q');
-    display(sprintf('\nData exists, %d trials already done %s',q.trialCount))
+display(sprintf('\nSearching psych data for subject %s',exp.sNstr))
+if exist(sprintf('%s%ss%s_psychCurve%s.mat',exp.Spath,filesep,exp.sNstr,datestr(now,'ddmmyy')))
+    load(sprintf('%s%ss%s_psychCurve%s.mat',exp.Spath,filesep,exp.sNstr,datestr(now,'ddmmyy')),'q');
+    display(sprintf('\nData exists, %d trials already done %s',q(1).trialCount+q(2).trialCount))
 else
     display(sprintf('\nData does not exists, \ncreating new Quest structure'))
-    exp.PC.tGuess      = -1.2;
-    exp.PC.tGuessSd    = 1;
-    exp.PC.pThreshold  = 0.82;
-    exp.PC.beta        = 3.5;
-    exp.PC.delta       = 0.02;
-    exp.PC.gamma       = 0.5;
-    q           = QuestCreate(tGuess,tGuessSd,pThreshold,beta,delta,gamma);
-    save(sprintf('%s%ss%s_psychCurve.mat',Spath,filesep,sNstr),'q');
+    q           = QuestCreate(exp.PC.tGuess,exp.PC.tGuessSd,exp.PC.pThreshold,exp.PC.beta,exp.PC.delta,exp.PC.gamma);
+    q(2)        = q;
+    save(sprintf('%s%ss%s_psychCurve%s.mat',exp.Spath,filesep,exp.sNstr,datestr(now,'ddmmyy')),'q');
 end
 
 %%
 contPsych = 1;
 while contPsych
-    display(sprintf('\n%d trials already done %s',q.trialCount))
+    display(sprintf('\n%d trials already done %s',q(1).trialCount+q(2).trialCount))
     sCont = input('\nStart/Continue adquiring Psycometric curve data (y/n)','s');
     if strcmp(sCont,'y')
-        nTrials = input('\nHow many stimuli/trials (e.g. 150)','d');
+        nTrials = str2num(input('\nHow many stimuli/trials (e.g. 150)','s'));
     else
         display(sprintf('\nStopping then ...',q.trialCount))
-        contPsych = 1;
+        contPsych = 0;
         continue
     end
-    tIntensity  = QuestQuantile(q);
-    randSOA     = .5+rand(nTrials,1);   
-    response    = 0;          
-    
+   randSOA     = .6+rand(nTrials,1);
+   side        = randsample([1,2],nTrials,'true');
+   response    = 0;          
+   if ~isfield(q,'rt')
+       q(1).rt = [];
+       q(2).rt = [];
+   end
     for t= 1:nTrials
-        if t ==1
-            lastStim      = GetSecs;                     
-            side          = 1;
+         % we define next trial intensity according to Quest or from a
+        % uniform distribution between -2sd and +2sd the threshold value
+        if rand(1)<.8
+            tIntensity  = QuestQuantile(q(side(t)));
+        else
+%             tIntensity  = 10.^(QuestMode(q)) + (10.^(QuestMode(q)+3.*QuestSd(q))-10.^(QuestMode(q))).*(2*rand(1)-1);
+            tIntensity  =   -1.4 + (-.7--1.4).*rand(1);
         end
+        
         PsychPortAudio('FillBuffer', pahandle, wave.tact.*10.^tIntensity);             % this takes less than 1 ms
         display(sprintf('Stimulus %d Intensity %1.3f',t,10.^tIntensity))
     
         PsychPortAudio('Start', pahandle, 0,0,0);    % repeats infitnely, starts as soon as posible, and continues with code inmediatly (we are contrling the stimulation with the parallel port so it does not matter)
         WaitSecs(randSOA(t));
-        putvalue(DIO.line(1:8),dec2binvec(side,8));     % 
+        putvalue(DIO.line(1:8),dec2binvec(side(t),8));     % 
         lastStim      = GetSecs;    
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:8),dec2binvec(0,8));     % stimulation channel is on during the complete trial
@@ -52,29 +56,39 @@ while contPsych
      
         while GetSecs-lastStim<1
             outVal = getvalue(DIO.Line(9:10));
-            if outVal(1) == 0
-                response = 1;
-                display(sprintf('Button 1 pressed %4.3f seconds',GetSecs-lastStim))
-                break
+            if sum(outVal(1:2))
+                q(side(t)).rt = [q(side(t)).rt,GetSecs-lastStim];
+                if outVal(1) == 0
+                    response = 1;
+                    break
+                elseif outVal(2) == 0
+                    response = 2;
+                    break
+                end
             end
         end
-        if response == 1
-            q=QuestUpdate(q,tIntensity,1); 
-            response = 0;
-        else
-             q=QuestUpdate(q,tIntensity,0); 
+        if response == 0;
+            q(side(t)).rt = [q(side(t)).rt,NaN];
         end
-        save(sprintf('%s%ss%s_psychCurve.mat',Spath,filesep,sNstr),'q');
-        
-        % we define next trial intensity according to Quest or from a
-        % uniform distribution between -2sd and +2sd the threshold value
-        if rand(1)>.9
-            tIntensity  = QuestQuantile(q);
+        if (response == 1 && side(t) ==1) || (response == 2 && side(t) ==2) 
+            q(side(t))=QuestUpdate(q(side(t)),tIntensity,1); 
+            display(sprintf('Button %d pressed %4.3f seconds, correct\n',response,q(side(t)).rt(end)))
+            
         else
-            tIntensity  = 10.^(QuestMode(q)-1.5*QuestSd(q)) + (10.^(QuestMode(q)+1.5.*QuestSd(q))-10.^(QuestMode(q)-1.5*QuestSd(q))).*rand(1);
+             display(sprintf('Button %d pressed %4.3f seconds, incorrect\n',response,q(side(t)).rt(end)))
+             q(side(t))=QuestUpdate(q(side(t)),tIntensity,0); 
         end
+        response = 0;
     end
+    save(sprintf('%s%ss%s_psychCurve%s.mat',exp.Spath,filesep,exp.sNstr,datestr(now,'ddmmyy')),'q');
+    display(sprintf('\nLeft Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(1)),10.^(QuestMean(q(1))+QuestSd(q(1)))-10.^QuestMean(q(1))))
+    display(sprintf('\nRight Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(2)),10.^(QuestMean(q(2))+QuestSd(q(2)))-10.^QuestMean(q(2))))
 end
 
 %%
-display(sprintf('\nIntensity threhsold: %1.3f\nIntensity sd: %1.3f',10.^QuestMode(q),10.^QuestSd(q)))
+ display(sprintf('\nLeft Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(1)),10.^(QuestMean(q(1))+QuestSd(q(1)))-10.^QuestMean(q(1))))
+    display(sprintf('\nRight Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(2)),10.^(QuestMean(q(2))+QuestSd(q(2)))-10.^QuestMean(q(2))))
+E299_PsychCurve
+exp.intensitites = [QuestMean(q(1)) QuestMean(q(1))+.1 QuestMean(q(1))+.3
+                    QuestMean(q(2)) QuestMean(q(2))+.1 QuestMean(q(2))+.3];
+exp.psych_curve =1;
