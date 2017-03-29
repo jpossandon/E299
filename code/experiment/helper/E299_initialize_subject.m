@@ -104,7 +104,7 @@ if create_result == 1                                                       % cr
     result.blockType          = repmat([1 1 1 1 1 1 2 2 2 2 2 2],...              % 1 - answer external 2- answer anatomical
                                  1,exp.nBlocks/12);    
     result.t_perBlock         = repmat(exp.nTrials_perBlock,1,exp.nBlocks);
-
+    result.block_session      = cell(1,exp.nBlocks); 
     %this are filled every block/trial
     result.trial_RT           = [];
     result.trial_blockType    = [];                                         % corresponding to block.blockType  
