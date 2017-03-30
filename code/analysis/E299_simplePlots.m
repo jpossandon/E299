@@ -1,5 +1,11 @@
 %%
-edges = 0:.05:1.5;
+datapath    = '/Users/jossando/trabajo/E299/';
+subj        = 5;
+task        = 'singleLH';
+filename    = sprintf('%sdata/s%d_%s/s%d_%s_results',datapath,subj,task,subj,task);
+
+load(filename)
+edges       = 0:.05:1.5;
 figure
 cmap    = cbrewer('qual','Paired',18);
 lnstl   = repmat({'-','-.',':'},1,4);
@@ -25,7 +31,10 @@ legend(h,leglab)
 xlabel('Reaction Time (s)')
 ylabel('Frequency')
 box off
-            
+ 
+figname = sprintf('%sfigures/s%d_%s_hist',datapath,subj,task);
+print(gcf,'-dpng',figname)
+close gcf
 %%
 figure,
 hold on
@@ -46,3 +55,6 @@ xlabel('Intensity','FontSize',14)
 ylabel('RT (mean+SD)','FontSize',14)
 vline(3.5:3:9.5,':k')
 tightfig
+
+figname = sprintf('%sfigures/s%d_%s_means',datapath,subj,task);
+print(gcf,'-dpng',figname)
