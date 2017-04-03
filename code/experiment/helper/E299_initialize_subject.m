@@ -75,8 +75,26 @@ end
 
 if cont_flag
    display(sprintf('\nLoading setting for s%s, checking PsychCurve and result file,',sNstr))
-   load(sprintf('%s%ss%s_%s_settings.mat',Spath,filesep,sNstr,sTtyp),'exp');
+ try
+   load(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'exp');
    display(sprintf(' previous setting file was created on the %s',exp.created))
+ catch
+   exp.nBlocks             = 96;                                                   % total number of blocks
+        exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+        exp.maxRT               = 2;
+        exp.soa_fix             = 1; 
+   exp.sNstr       = sNstr;
+    exp.sTtyp       = sTtyp;
+    exp.created     = datestr(now);
+    exp.Spath       = Spath;
+    exp.PC.tGuess      = -1;
+    exp.PC.tGuessSd    = 1;
+    exp.PC.pThreshold  = 0.82;
+    exp.PC.beta        = 3.5;
+    exp.PC.delta       = 0.02;
+    exp.PC.gamma       = 0.5;
+     save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'exp','-append')
+ end
    A = exist(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'file'); 
    if A == 0 
       display(sprintf('\nResult file for s%s does not exist,\n creating a new one',sNstr))
@@ -93,7 +111,7 @@ if cont_flag
         display(sprintf('\nZero blocs have been performed,\nwe start then from Block #1 ...\n'))
         next_block = 1;
       end
-      save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result')
+      save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result','-append')
    end
 end
 

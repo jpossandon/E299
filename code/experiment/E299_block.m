@@ -80,5 +80,5 @@ end
 result.block_done(next_block) = 1;
 result.block_session{next_block} = datestr(now,'ddmmyy');
 
- save(sprintf('%s%ss%s_%s_results.mat',exp.Spath,filesep,exp.sNstr,exp.sTtyp),'result')
+ save(sprintf('%s%ss%s_%s_results.mat',exp.Spath,filesep,exp.sNstr,exp.sTtyp),'result','-append')
  

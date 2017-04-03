@@ -12,7 +12,7 @@ display('\nDone.')
 
 %%
 % Open Audio ports and create the stimulus
-display('\nSetting-up audio ports and stimuli')
+display(sprintf('\nSetting-up audio ports and stimuli'))
 
 exp.sound.fs                = 48000;                                        % sound sampling rate
 exp.sound.nrchannels        = 2;                                            % stereo not really necessary here
@@ -32,6 +32,6 @@ exp.sound.tact_freq   = 200;
 wave.tact             = sin(2.*pi.*exp.sound.tact_freq.*...                 % the tactile stimulus
                          [0:1/exp.sound.fs:exp.sound.tactile_dur-1/exp.sound.fs]);      
 wave.tact(2,:)        = 0;                                                  % sound channel is stereo tactile stimulator is connected to 2nd channel, first channel can be used to give auditory feedback (not used here yet)
-display('\nDone.')
+display(sprintf('\nDone.'))
 
 input('\nPlease check that amplifier channels 1&2 are at intensity 7\n and that windows volume is at max\nPress Enter continue','s');
