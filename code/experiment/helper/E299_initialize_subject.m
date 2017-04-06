@@ -7,7 +7,9 @@ function [exp,result,next_block] = E299_initialize_subject(Ppath)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 sNstr           = input('\nSubject number: ','s');
-sTtyp           = 'singleLH';
+sTtyp           = input('\nTrial type (singleLH;handEye): ','s');
+
+% sTtyp           = 'singleLH';
 Spath           = sprintf('%sdata%ss%s_%s',Ppath,filesep,sNstr,sTtyp);              % path to subject data folder
 
 % check wether subject folder exists and what does the experimenter want to do
@@ -54,6 +56,17 @@ if restart_flag                                                             % cr
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         exp.maxRT               = 2;
         exp.soa_fix             = 1;
+        exp.PC.tGuess      = -1;
+        exp.PC.tGuessSd    = 1;
+        exp.PC.pThreshold  = 0.82;
+        exp.PC.beta        = 3.5;
+        exp.PC.delta       = 0.02;
+        exp.PC.gamma       = 0.5;
+    elseif strcmp(sTtyp,'handEye')
+        exp.nBlocks             = 96;                                                   % total number of blocks
+        exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+        exp.maxRT               = 2;
+        exp.soa_fix             = 1;
     else
         error(sprintf('Task %s does not exist',sTyp))
     end
@@ -61,12 +74,7 @@ if restart_flag                                                             % cr
     exp.sTtyp       = sTtyp;
     exp.created     = datestr(now);
     exp.Spath       = Spath;
-    exp.PC.tGuess      = -1;
-    exp.PC.tGuessSd    = 1;
-    exp.PC.pThreshold  = 0.82;
-    exp.PC.beta        = 3.5;
-    exp.PC.delta       = 0.02;
-    exp.PC.gamma       = 0.5;
+
     save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'exp')
 %     save(sprintf('%s%ss%s_%s_settings.mat',Spath,filesep,sNstr,sTtyp),'exp');
     create_result   = 1;
@@ -117,10 +125,6 @@ end
 
 if create_result == 1                                                       % create new result file
     result.block_done         = zeros(1,exp.nBlocks);  
-    result.block_crossed      = repmat(randsample([1 0],2),...              % 0 - uncrossed ; 1 - crossed 
-                                1,exp.nBlocks/2);
-    result.blockType          = repmat([1 1 1 1 1 1 2 2 2 2 2 2],...              % 1 - answer external 2- answer anatomical
-                                 1,exp.nBlocks/12);    
     result.t_perBlock         = repmat(exp.nTrials_perBlock,1,exp.nBlocks);
     result.block_session      = cell(1,exp.nBlocks); 
     %this are filled every block/trial
@@ -128,11 +132,24 @@ if create_result == 1                                                       % cr
     result.trial_blockType    = [];                                         % corresponding to block.blockType  
     result.trial_crossed      = [];                                         % 0 - uncrossed ; 1 - crossed
     result.trial_response     = [];                                         % 0 - no response; 1 - left ; 2 - right (external)
-    result.trial_limbside     = [];                                         % 0 - left ; 1 - right (anatomical
-    result.trial_int          = [];                                         % trial intensity (1 - threshold; 2 - threhsold +sd; 3 -  threhsold +sd)
+    result.trial_limbside     = [];        
     result.trial_randSOA      = [];
-    result.trial_correct            = [];                                         % NaN - no response, 0 - incorrect, 1 correct
+    result.trial_correct      = [];                                         % NaN - no response, 0 - incorrect, 1 correct
     result.created            = datestr(now);
+    if strcmp(sTtyp,'singleLH')
+       result.block_crossed      = repmat(randsample([1 0],2),...              % 0 - uncrossed ; 1 - crossed 
+                                    1,exp.nBlocks/2);
+        result.blockType          = repmat([1 1 1 1 1 1 2 2 2 2 2 2],...              % 1 - answer external 2- answer anatomical
+                                     1,exp.nBlocks/12);    
+                                        % 0 - left ; 1 - right (anatomical
+        result.trial_int          = [];                                         % trial intensity (1 - threshold; 2 - threhsold +sd; 3 -  threhsold +sd)
+        
+    elseif strcmp(sTtyp,'handEye')
+        result.block_crossed      = repmat(randsample([1 0],2),...              % 0 - uncrossed ; 1 - crossed 
+                                    1,exp.nBlocks/2);    
+        result.blockType          = repmat([1 1 2 2],...              % 1 - ezes open 2- eyes closed
+                                     1,exp.nBlocks/4);    
+    end
     save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result','-append')
     next_block = 1;
 end
