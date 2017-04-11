@@ -1,0 +1,15 @@
+
+result.                 : structure with the results of exp. E299 trial type 'singleLH'
+       block_done       : used in the experiment code, to keep track of how many session have been done
+       block_crossed    : 0 - legs uncrossed; 1 - legs crossed
+       blockType        : 1 - answer external 2 - answer anatomical
+       t_perBlock       : used in the experiment code, # of trials (currently fixed)
+       trial_RT         : reaction times of each trial
+       trial_crossed    : 0 - legs uncrossed; 1 - legs crossed
+       trial_response   : 0 - left button; 1 - right button   
+       trial_limbside   : which limb was stimulated 0 - left leg; 1 - right leg
+       trial_int        : stimulation intensity 1- 3dB higher than sensory threshold (~82% correct); 2 - 6db; 3 - 9dB
+       trial_randSOA    : time from last response to new stimulation, is composed of a fixed part (exp.soa_fix) plus a jitter obtained from a uniform distribution between 0-1s 
+       trial_correct    : 0 - incorrect; 1 - correct 
+       created          : date of result file creation (the result structure is iverwritten on each block)
+       block_session    : date of each block

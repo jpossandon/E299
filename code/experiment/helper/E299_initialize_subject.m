@@ -11,7 +11,7 @@ sTtyp           = input('\nTrial type (singleLH;handEye): ','s');
 
 % sTtyp           = 'singleLH';
 Spath           = sprintf('%sdata%ss%s_%s',Ppath,filesep,sNstr,sTtyp);              % path to subject data folder
-
+% TODO redo folder structure to exp_type_folder/subject_files
 % check wether subject folder exists and what does the experimenter want to do
 if isdir(Spath)                        
     aux_inp1 = input(sprintf(...

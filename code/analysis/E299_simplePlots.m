@@ -1,6 +1,6 @@
 %%
 datapath    = '/Users/jossando/trabajo/E299/';
-subj        = 5;
+subj        = 1;
 task        = 'singleLH';
 filename    = sprintf('%sdata/s%d_%s/s%d_%s_results',datapath,subj,task,subj,task);
 
