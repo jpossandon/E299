@@ -7,10 +7,10 @@ function [exp,result,next_block] = E299_initialize_subject(Ppath)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 sNstr           = input('\nSubject number: ','s');
-sTtyp           = input('\nTrial type (singleLH;handEye): ','s');
+sTtyp           = input('\nTrial type (LH2cross;singleLH;handEye): ','s');
 
 % sTtyp           = 'singleLH';
-Spath           = sprintf('%sdata%ss%s_%s',Ppath,filesep,sNstr,sTtyp);              % path to subject data folder
+Spath           = sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp);              % path to subject data folder
 % TODO redo folder structure to exp_type_folder/subject_files
 % check wether subject folder exists and what does the experimenter want to do
 if isdir(Spath)                        
@@ -50,8 +50,8 @@ end
     
 if restart_flag                                                             % create folder an subject specific setting structure
     display(sprintf('\n\nNew subject s%s task %s,\n creating subject settings, result files and folder structure ...\n',sNstr,sTtyp))
-    mkdir(sprintf('%sdata%ss%s_%s',Ppath,filesep,sNstr,sTtyp))
-    if strcmp(sTtyp,'singleLH')
+    mkdir(sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp));
+    if strcmp(sTtyp,'singleLH') | strcmp(sTtyp,'LH2cross')
         exp.nBlocks             = 96;                                                   % total number of blocks
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         exp.maxRT               = 2;
@@ -137,18 +137,27 @@ if create_result == 1                                                       % cr
     result.trial_correct      = [];                                         % NaN - no response, 0 - incorrect, 1 correct
     result.created            = datestr(now);
     if strcmp(sTtyp,'singleLH')
-       result.block_crossed      = repmat(randsample([1 0],2),...              % 0 - uncrossed ; 1 - crossed 
+       result.block_crossed      = repmat(randsample([1 0],2),...           % 0 - uncrossed ; 1 - crossed 
                                     1,exp.nBlocks/2);
-        result.blockType          = repmat([1 1 1 1 1 1 2 2 2 2 2 2],...              % 1 - answer external 2- answer anatomical
+        result.blockType          = repmat([1 1 1 1 1 1 2 2 2 2 2 2],...    % 1 - answer external 2- answer anatomical
                                      1,exp.nBlocks/12);    
                                         % 0 - left ; 1 - right (anatomical
-        result.trial_int          = [];                                         % trial intensity (1 - threshold; 2 - threhsold +sd; 3 -  threhsold +sd)
+        result.trial_int          = [];                                     % trial intensity (1 - threshold; 2 - threhsold +sd; 3 -  threhsold +sd)
         
     elseif strcmp(sTtyp,'handEye')
-        result.block_crossed      = repmat(randsample([1 0],2),...              % 0 - uncrossed ; 1 - crossed 
+        result.block_crossed      = repmat(randsample([1 0],2),...          % 0 - uncrossed ; 1 - crossed 
                                     1,exp.nBlocks/2);    
-        result.blockType          = repmat([1 1 2 2],...              % 1 - ezes open 2- eyes closed
+        result.blockType          = repmat([1 1 2 2],...                    % 1 - ezes open 2- eyes closed
                                      1,exp.nBlocks/4);    
+    elseif strcmp(sTtyp,'LH2cross')
+        result.block_crossed_legs    = repmat(randsample([1 0],2),...          % 0 - uncrossed ; 1 - crossed 
+                                    1,exp.nBlocks/2);
+        result.block_crossed_hands  = repmat([0 0 1 1],...          % 0 - uncrossed ; 1 - crossed 
+                                    1,exp.nBlocks/4);                        
+        result.blockType          = repmat([1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2],...    % 1 - answer external 2- answer anatomical
+                                     1,exp.nBlocks/16);    
+                                        % 0 - left ; 1 - right (anatomical
+        result.trial_int          = [];   
     end
     save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result','-append')
     next_block = 1;

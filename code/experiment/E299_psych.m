@@ -95,6 +95,11 @@ E299_PsychCurve
 % amplitued that gives xdB from reference amplitude is
 % 10.^(x/20+log10(ref)) and with already log transformed intensities is 
 % 10.^(x/20+ref)
-exp.intensitites = [(3/20+QuestMean(q(1))) (6/20+QuestMean(q(1))) (9/20+QuestMean(q(1)));
+if strcmp(sTtyp,'singleLH') 
+    exp.intensitites = [(3/20+QuestMean(q(1))) (6/20+QuestMean(q(1))) (9/20+QuestMean(q(1)));
                     (3/20+QuestMean(q(2))) (6/20+QuestMean(q(2))) (9/20+QuestMean(q(1)))];
-exp.psych_curve =1;
+elseif strcmp(sTtyp,'LH2cross')
+    exp.intensitites = [(3/20+QuestMean(q(1))) (15/20+QuestMean(q(1)));
+                    (3/20+QuestMean(q(2))) (15/20+QuestMean(q(2)))];
+end
+exp.psych_curve = 1;
