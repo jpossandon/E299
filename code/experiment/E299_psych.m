@@ -40,11 +40,11 @@ while contPsych
             tIntensity  = QuestQuantile(q(side(t)));
         else
 %             tIntensity  = 10.^(QuestMode(q)) + (10.^(QuestMode(q)+3.*QuestSd(q))-10.^(QuestMode(q))).*(2*rand(1)-1);
-            tIntensity  =   -1.4 + (-.7-(-1.4)).*rand(1);
+            tIntensity  =   -1.4 + (-.7-(-1.4)).*rand(1)
         end
         
         PsychPortAudio('FillBuffer', pahandle, wave.tact.*10.^tIntensity);             % this takes less than 1 ms
-        display(sprintf('Stimulus %d Intensity %1.3f',t,10.^tIntensity))
+        display(sprintf('Stimulus %d Side %d Intensity %1.3f',t,side(t),10.^tIntensity))
     
         PsychPortAudio('Start', pahandle, 0,0,0);    % repeats infitnely, starts as soon as posible, and continues with code inmediatly (we are contrling the stimulation with the parallel port so it does not matter)
         WaitSecs(randSOA(t));
@@ -95,10 +95,10 @@ E299_PsychCurve
 % amplitued that gives xdB from reference amplitude is
 % 10.^(x/20+log10(ref)) and with already log transformed intensities is 
 % 10.^(x/20+ref)
-if strcmp(sTtyp,'singleLH') 
+if strcmp(exp.sTtyp,'singleLH') 
     exp.intensitites = [(3/20+QuestMean(q(1))) (6/20+QuestMean(q(1))) (9/20+QuestMean(q(1)));
                     (3/20+QuestMean(q(2))) (6/20+QuestMean(q(2))) (9/20+QuestMean(q(1)))];
-elseif strcmp(sTtyp,'LH2cross')
+elseif strcmp(exp.sTtyp,'LH2cross')
     exp.intensitites = [(3/20+QuestMean(q(1))) (15/20+QuestMean(q(1)));
                     (3/20+QuestMean(q(2))) (15/20+QuestMean(q(2)))];
 end
