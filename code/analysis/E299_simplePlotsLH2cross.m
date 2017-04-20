@@ -1,7 +1,7 @@
 %%
 clear
 datapath    = '/Users/jossando/trabajo/E299/';
-subj        = 2;
+subj        = 1;
 task        = 'LH2cross';
 filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
                         filesep,subj,task,filesep,subj,task);
