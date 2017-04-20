@@ -1,6 +1,7 @@
 %%
+clear
 datapath    = '/Users/jossando/trabajo/E299/';
-subj        = 1;
+subj        = 2;
 task        = 'LH2cross';
 filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
                         filesep,subj,task,filesep,subj,task);
@@ -35,8 +36,15 @@ for b = 1:2
                 & result.trial_crossed_hand==cH ...
                 & result.trial_int==i);
                 N = histc(data,edges);
-                stat(n,:) = [median(data) mean(data) std(data) sum(N)];
+                stat(n,:) = [median(data) mean(data) std(data)];
                 h(n) = plot(edges,N./sum(N),'LineStyle',lnstl{n},'Color',cmap(col,:),'LineWidth',2); hold on;
+                
+                data = result.trial_correct(result.trial_blockType==b ...
+                & result.trial_crossed_legs==cL ...
+                & result.trial_crossed_hand==cH ...
+                & result.trial_int==i);  
+                
+                perf(n,:) = [sum(data==1) sum(data==0) sum(isnan(data)) length(data)]; % correct/incorrect/missed/total
                 n=n+1;
             end
             col = col+1;
@@ -50,8 +58,10 @@ box off
  
 figname = sprintf('%sfigures%s%s%ss%d_%s_hist',datapath,filesep,task,filesep,subj,task);
 print(gcf,'-dpng',figname)
-close gcf
+% close gcf
 %%
+% reaction time
+
 figure,
 set(gcf,'Position',[-1 64 1134 650])
 hold on
@@ -81,4 +91,35 @@ vline(2.5:2:15.5,':k')
 tightfig
  
  figname = sprintf('%sfigures%s%s%ss%d_%s_means',datapath,filesep,task,filesep,subj,task);
+ print(gcf,'-dpng',figname)
+
+%%
+% performance
+figure,
+set(gcf,'Position',[-1 64 1134 650])
+hold on
+leglab  = {'Ext UL UH','Ext UL CH',...
+    'Ext CL UH','Ext CL CH',...
+    'Anat UL UH','Anat UL CH',...
+    'Anat CL UH','Anat CL CH'};
+xx=1;
+for e = [1,5,2,6,3,7,4,8]
+  
+    auxindx = e*2-1:e*2;
+    hp(1) = plot(xx:xx+1,perf(auxindx,2)./perf(auxindx,4),'o',...
+        'MarkerFaceColor',cmap(e,:),'MarkerEdgeColor',[0 0 0],'MarkerSize',8)
+    hp(2) = plot(xx:xx+1,perf(auxindx,3)./perf(auxindx,4),'s',...
+        'MarkerFaceColor',cmap(e,:),'MarkerEdgeColor',[0 0 0],'MarkerSize',8)
+    text(xx,.18,leglab(e),'Color',cmap(e,:),'FontSize',12,'Fontweight','bold')
+    xx = xx+2;
+end
+axis([0.5 16.5 0 .2])
+set(gca,'XTick',1:16,'XTickLabel',{'3dB','15dB'})
+legend(hp,{'incorrect','miss'})
+xlabel('Intensity','FontSize',14)
+ylabel('% incorrect/misses','FontSize',14)
+vline(2.5:2:15.5,':k')
+tightfig
+ 
+ figname = sprintf('%sfigures%s%s%ss%d_%s_perf',datapath,filesep,task,filesep,subj,task);
  print(gcf,'-dpng',figname)

@@ -157,7 +157,8 @@ if create_result == 1                                                       % cr
         result.blockType          = repmat([1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2],...    % 1 - answer external 2- answer anatomical
                                      1,exp.nBlocks/16);    
                                         % 0 - left ; 1 - right (anatomical
-        result.trial_int          = [];   
+        result.trial_int          = []; 
+        result.trial_actualIntensity = [];
     end
     save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result','-append')
     next_block = 1;

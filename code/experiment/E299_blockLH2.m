@@ -5,9 +5,12 @@
 %     sCont = input('\n Continue with next block (y/n)','s');
 nTrials      = result.t_perBlock(next_block);
 next_trial   = sum(result.t_perBlock(1:next_block-1))+1;
-result.trial_int(next_trial:next_trial+nTrials-1)           = randsample([1:2],nTrials,'true');
+auxtint      = repmat([1 1 2 2],1,nTrials/4);
+auxtlimb     = repmat([1 2],1,nTrials/2);
+aunxrnd      = randperm(nTrials);
+result.trial_int(next_trial:next_trial+nTrials-1)           = auxtint(aunxrnd);
 result.trial_randSOA(next_trial:next_trial+nTrials-1)       = exp.soa_fix+rand(1,nTrials);   
-result.trial_limbside(next_trial:next_trial+nTrials-1)      =  round(1+rand(1,nTrials));
+result.trial_limbside(next_trial:next_trial+nTrials-1)      = auxtlimb(aunxrnd);
 result.trial_blockType(next_trial:next_trial+nTrials-1)     = repmat(result.blockType(next_block),1,nTrials);                                         % 0 - uncrossed ; 1 - crossed
 result.trial_crossed_legs(next_trial:next_trial+nTrials-1)  = repmat(result.block_crossed_legs(next_block),1,nTrials);                                         % 0 - uncrossed ; 1 - crossed
 result.trial_crossed_hand(next_trial:next_trial+nTrials-1)  = repmat(result.block_crossed_hands(next_block),1,nTrials);  
@@ -16,11 +19,15 @@ result.trial_crossed_hand(next_trial:next_trial+nTrials-1)  = repmat(result.bloc
 for t= next_trial:next_trial+nTrials-1
     response    = 0; 
     side        = result.trial_limbside(t); %1 left 2 right (anatomical)
-    tIntensity  = exp.intensitites(side,result.trial_int(t));
+    result.trial_actualIntensity(t) = 10.^((rand(1)-.5)/20+exp.intensitites(side,result.trial_int(t)));
 
+    % change to variable intensity so participants cannot associate a
+    % specific intensity sensation with a response, the calculated
+    % intensities of 1.5 and 5 times the threhsold are taken from an uniform
+    % distribution around the level -+.5 dB
     
-    PsychPortAudio('FillBuffer', pahandle, wave.tact.*10.^tIntensity);             % this takes less than 1 ms
-    display(sprintf('Stimulus %d Intensity %1.3f',t,10.^tIntensity))
+    PsychPortAudio('FillBuffer', pahandle, wave.tact.*result.trial_actualIntensity(t));             % this takes less than 1 ms
+    display(sprintf('Stimulus %d Intensity %1.3f',t,result.trial_actualIntensity(t)))     
     
     PsychPortAudio('Start', pahandle, 0,0,0);    % repeats infitnely, starts as soon as posible, and continues with code inmediatly (we are contrling the stimulation with the parallel port so it does not matter)
     WaitSecs(result.trial_randSOA(t));
