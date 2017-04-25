@@ -88,7 +88,7 @@ if cont_flag
    display(sprintf(' previous setting file was created on the %s',exp.created))
  catch
    exp.nBlocks             = 96;                                                   % total number of blocks
-        exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+        exp.nTrials_perBlock    = 120; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         exp.maxRT               = 2;
         exp.soa_fix             = 1; 
    exp.sNstr       = sNstr;
