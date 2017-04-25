@@ -88,7 +88,7 @@ if cont_flag
    display(sprintf(' previous setting file was created on the %s',exp.created))
  catch
    exp.nBlocks             = 96;                                                   % total number of blocks
-        exp.nTrials_perBlock    = 120; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+        exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         exp.maxRT               = 2;
         exp.soa_fix             = 1; 
    exp.sNstr       = sNstr;
@@ -150,9 +150,9 @@ if create_result == 1                                                       % cr
         result.blockType          = repmat([1 1 2 2],...                    % 1 - ezes open 2- eyes closed
                                      1,exp.nBlocks/4);    
     elseif strcmp(sTtyp,'LH2cross')
-        result.block_crossed_legs    = repmat(randsample([1 0],2),...          % 0 - uncrossed ; 1 - crossed 
+        result.block_crossed_legs    = repmat(randsample([1 0],2),...       % 0 - uncrossed ; 1 - crossed 
                                     1,exp.nBlocks/2);
-        result.block_crossed_hands  = repmat([0 0 1 1],...          % 0 - uncrossed ; 1 - crossed 
+        result.block_crossed_hands  = repmat([0 0 1 1],...                  % 0 - uncrossed ; 1 - crossed 
                                     1,exp.nBlocks/4);                        
         result.blockType          = repmat([1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2],...    % 1 - answer external 2- answer anatomical
                                      1,exp.nBlocks/16);    
