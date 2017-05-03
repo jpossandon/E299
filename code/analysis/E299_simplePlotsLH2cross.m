@@ -1,7 +1,7 @@
 %%
 clear
 datapath    = '/Users/jossando/trabajo/E299/';
-subj        = 1;
+subj        = 3;
 task        = 'LH2cross';
 filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
                         filesep,subj,task,filesep,subj,task);
@@ -83,7 +83,7 @@ for e = [1,5,2,6,3,7,4,8]
     xx = xx+2;
 end
 axis([0.5 16.5 0 1])
-set(gca,'XTick',1:16,'XTickLabel',{'3dB','15dB'})
+set(gca,'XTick',1:16,'XTickLabel',{'3.5dB','14dB'})
 % legend(hh,{'extUnc','extC','anatUnc','anatC'})
 xlabel('Intensity','FontSize',14)
 ylabel('RT (mean+SD)','FontSize',14)
@@ -113,8 +113,9 @@ for e = [1,5,2,6,3,7,4,8]
     text(xx,.18,leglab(e),'Color',cmap(e,:),'FontSize',12,'Fontweight','bold')
     xx = xx+2;
 end
-axis([0.5 16.5 0 .2])
-set(gca,'XTick',1:16,'XTickLabel',{'3dB','15dB'})
+ axis([0.5 16.5 0 .25])
+
+set(gca,'XTick',1:16,'XTickLabel',{'3.5dB','14dB'})
 legend(hp,{'incorrect','miss'})
 xlabel('Intensity','FontSize',14)
 ylabel('% incorrect/misses','FontSize',14)

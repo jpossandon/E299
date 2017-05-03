@@ -103,7 +103,8 @@ if strcmp(exp.sTtyp,'singleLH')
 elseif strcmp(exp.sTtyp,'LH2cross')
     % 20.04.17, change to ~3.5 and ~14 dB (1.5 and 5 times intensity, log10(1.5)*20)
     % before it was 3 and 15 (to be used -+ .5 dB)
-    exp.intensitites = [(log10(1.5)+QuestMean(q(1))) (log10(5)+QuestMean(q(1)));
-                    (log10(1.5)+QuestMean(q(2))) (log10(5)+QuestMean(q(2)))];
+    % 03.05.17, change to ~6 and ~15.5 dB (2 and 6 times intensity, log10(2)*20)
+    exp.intensitites = [(log10(2)+QuestMean(q(1))) (log10(6)+QuestMean(q(1)));
+                    (log10(2)+QuestMean(q(2))) (log10(6)+QuestMean(q(2)))];
 end
 exp.psych_curve = 1;

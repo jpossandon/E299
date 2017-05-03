@@ -56,12 +56,12 @@ if restart_flag                                                             % cr
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         exp.maxRT               = 2;
         exp.soa_fix             = 1;
-        exp.PC.tGuess      = -1;
-        exp.PC.tGuessSd    = 1;
-        exp.PC.pThreshold  = 0.82;
-        exp.PC.beta        = 3.5;
-        exp.PC.delta       = 0.02;
-        exp.PC.gamma       = 0.5;
+        exp.PC.tGuess           = -1;
+        exp.PC.tGuessSd         = 1;
+        exp.PC.pThreshold       = 0.82;
+        exp.PC.beta             = 3.5;
+        exp.PC.delta            = 0.02;
+        exp.PC.gamma            = 0.5;
     elseif strcmp(sTtyp,'handEye')
         exp.nBlocks             = 96;                                                   % total number of blocks
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
@@ -139,10 +139,10 @@ if create_result == 1                                                       % cr
     if strcmp(sTtyp,'singleLH')
        result.block_crossed      = repmat(randsample([1 0],2),...           % 0 - uncrossed ; 1 - crossed 
                                     1,exp.nBlocks/2);
-        result.blockType          = repmat([1 1 1 1 1 1 2 2 2 2 2 2],...    % 1 - answer external 2- answer anatomical
+       result.blockType          = repmat([1 1 1 1 1 1 2 2 2 2 2 2],...    % 1 - answer external 2- answer anatomical
                                      1,exp.nBlocks/12);    
                                         % 0 - left ; 1 - right (anatomical
-        result.trial_int          = [];                                     % trial intensity (1 - threshold; 2 - threhsold +sd; 3 -  threhsold +sd)
+       result.trial_int          = [];                                     % trial intensity (1 - threshold; 2 - threhsold +sd; 3 -  threhsold +sd)
         
     elseif strcmp(sTtyp,'handEye')
         result.block_crossed      = repmat(randsample([1 0],2),...          % 0 - uncrossed ; 1 - crossed 
@@ -150,15 +150,28 @@ if create_result == 1                                                       % cr
         result.blockType          = repmat([1 1 2 2],...                    % 1 - ezes open 2- eyes closed
                                      1,exp.nBlocks/4);    
     elseif strcmp(sTtyp,'LH2cross')
-        result.block_crossed_legs    = repmat(randsample([1 0],2),...       % 0 - uncrossed ; 1 - crossed 
-                                    1,exp.nBlocks/2);
-        result.block_crossed_hands  = repmat([0 0 1 1],...                  % 0 - uncrossed ; 1 - crossed 
-                                    1,exp.nBlocks/4);                        
-        result.blockType          = repmat([1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2],...    % 1 - answer external 2- answer anatomical
-                                     1,exp.nBlocks/16);    
-                                        % 0 - left ; 1 - right (anatomical
-        result.trial_int          = []; 
-        result.trial_actualIntensity = [];
+        % to get the balancing of hand and leg block crossing, with four
+        % different conditions that can be arranged (permuted) in 24
+        % different way. For complete balance with response mode we need
+        % double subjects (this is all overkill, since we are not going to
+        % have hundreds of subject ...)
+        pb              = [perms([3 2 1 0]);perms([0 1 2 3])];             % get (double) all permutations 
+        sind            = mod(str2num(sNstr)-1,48)+1;                      % which of the block ordering subject sNstr gets, this formulation works for any subject number
+        auxbin          = dec2bin(pb(sind,:));                             % this two lines transform it to the coding of block_crossed below
+        auxbin          = str2num(auxbin(:));
+        result.block_crossed_legs       = repmat(auxbin(1:4)',...          % 0 - uncrossed ; 1 - crossed 
+                                            1,exp.nBlocks/4);
+        result.block_crossed_hands      = repmat(auxbin(5:8)',...          % 0 - uncrossed ; 1 - crossed 
+                                            1,exp.nBlocks/4);                        
+        if mod(str2num(sNstr),2)        % even subjects start with external blocks  
+           result.blockType             = repmat(reshape(repmat([1 2],12,1),[1,24]),...    % 1 - answer external 2- answer anatomical
+                                            1,exp.nBlocks/24); 
+        else                            % odd subjects start with external blocks
+           result.blockType             = repmat(reshape(repmat([2 1],12,1),[1,24]),...    % 1 - answer external 2- answer anatomical
+                                            1,exp.nBlocks/24); 
+        end
+        result.trial_int                = []; 
+        result.trial_actualIntensity    = [];
     end
     save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result','-append')
     next_block = 1;
