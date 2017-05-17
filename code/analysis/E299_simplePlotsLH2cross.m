@@ -1,19 +1,19 @@
 %%
-clear
-datapath    = '/Users/jossando/trabajo/E299/';
-subj        = 1;
+% clear
+% datapath    = '/Users/jossando/trabajo/E299/';
+% subj        = 3;
 task        = 'LH2cross';
-filename    = sprintf('%sdata%s%s%spilot%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
-                        filesep,filesep,subj,task,filesep,subj,task);      % for pilot data
-%filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
-%                        filesep,subj,task,filesep,subj,task);
-load(filename)
+% filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
+%                         filesep,subj,task,filesep,subj,task);      % for pilot data
+% %filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
+% %                        filesep,subj,task,filesep,subj,task);
+% load(filename)
 %%
 edges       = 0:.05:2;
-figure
-cmap    = cbrewer('qual','Paired',12);
+figure;
+cmap        = cbrewer('qual','Paired',12);
 % cmap(5:8,:) = [];
-lnstl   = repmat({'-',':'},1,8);
+lnstl       = repmat({'-',':'},1,8);
 
 
  % ressult response coding
@@ -26,9 +26,10 @@ leglab  = {'Ext UL UH 3dB','Ext UL UH 15dB','Ext UL CH 3dB','Ext UL CH 15dB',...
     'Ext CL UH 3dB','Ext CL UH 15dB','Ext CL CH 3dB','Ext CL CH 15dB',...
     'Anat UL UH 3dB','Anat UL UH 15dB','Anat UL CH 3dB','Anat UL CH 15dB',...
     'Anat CL UH 3dB','Anat CL UH 15dB','Anat CL CH 3dB','Anat CL CH 15dB'};
-n=1;
-nndB = 1
-col = 1;
+n       = 1;
+nndB    = 1;
+col     = 1;
+
 for b = 1:2
    for cL = 0:1
         for cH = 0:1
@@ -39,11 +40,11 @@ for b = 1:2
                 stat_avgdB(nndB,:) = [median(data) mean(data) std(data)];
                 nndB = nndB+1;
             for i = 1:2
-            data = result.trial_RT(result.trial_correct==1 ...
-                & result.trial_blockType==b ...
-                & result.trial_crossed_legs==cL ...
-                & result.trial_crossed_hand==cH ...
-                & result.trial_int==i);
+                data = result.trial_RT(result.trial_correct==1 ...
+                    & result.trial_blockType==b ...
+                    & result.trial_crossed_legs==cL ...
+                    & result.trial_crossed_hand==cH ...
+                    & result.trial_int==i);
                 N = histc(data,edges);
                 stat(n,:) = [median(data) mean(data) std(data)];
                 h(n) = plot(edges,N./sum(N),'LineStyle',lnstl{n},'Color',cmap(col,:),'LineWidth',2); hold on;
@@ -60,14 +61,13 @@ for b = 1:2
         end
     end
 end
-legend(h,leglab)
+legend(h,leglab);
 xlabel('Reaction Time (s)')
 ylabel('Frequency')
 box off
- 
-figname = sprintf('%sfigures%s%s%ss%d_%s_hist',datapath,filesep,task,filesep,subj,task);
-% print(gcf,'-dpng',figname)
-% close gcf
+figname = sprintf('%s%ss%d_LH2cross_hist',pathFigures,filesep,subj);
+print(gcf,'-dpng',figname)
+close gcf
 %%
 % reaction time
 
@@ -98,10 +98,10 @@ xlabel('Intensity','FontSize',14)
 ylabel('RT (mean+SD)','FontSize',14)
 vline(2.5:2:15.5,':k')
 tightfig
- 
- figname = sprintf('%sfigures%s%s%ss%d_%s_means',datapath,filesep,task,filesep,subj,task);
-%  print(gcf,'-dpng',figname)
 
+figname = sprintf('%s%ss%d_LH2cross_means',pathFigures,filesep,subj);
+print(gcf,'-dpng',figname)
+close(gcf)
 %%
 % performance
 figure,
@@ -116,9 +116,9 @@ for e = [1,5,2,6,3,7,4,8]
   
     auxindx = e*2-1:e*2;
     hp(1) = plot(xx:xx+1,perf(auxindx,2)./perf(auxindx,4),'o',...
-        'MarkerFaceColor',cmap(e,:),'MarkerEdgeColor',[0 0 0],'MarkerSize',8)
+        'MarkerFaceColor',cmap(e,:),'MarkerEdgeColor',[0 0 0],'MarkerSize',8);
     hp(2) = plot(xx:xx+1,perf(auxindx,3)./perf(auxindx,4),'s',...
-        'MarkerFaceColor',cmap(e,:),'MarkerEdgeColor',[0 0 0],'MarkerSize',8)
+        'MarkerFaceColor',cmap(e,:),'MarkerEdgeColor',[0 0 0],'MarkerSize',8);
     text(xx,.18,leglab(e),'Color',cmap(e,:),'FontSize',12,'Fontweight','bold')
     xx = xx+2;
 end
@@ -130,9 +130,9 @@ xlabel('Intensity','FontSize',14)
 ylabel('% incorrect/misses','FontSize',14)
 vline(2.5:2:15.5,':k')
 tightfig
- 
- figname = sprintf('%sfigures%s%s%ss%d_%s_perf',datapath,filesep,task,filesep,subj,task);
-%  print(gcf,'-dpng',figname)
+figname = sprintf('%s%ss%d_LH2cross_perf',pathFigures,filesep,subj); 
+print(gcf,'-dpng',figname)
+close(gcf)
 
 %%
 % nicer plots
@@ -156,7 +156,7 @@ for e = 1:4
 %         'Color',cmap(e,:),'LineWidth',2);
 %     hh(e) = line(1:2,stat_avgdB([e,e+4],2),'LineStyle',lstl{e},...
 %         'Color',cmap2(e,:),'LineWidth',2);
-     hh(e) = plot(1:2,stat_avgdB([e,e+4],2),mstl{e},'Color',cmap2(e,:),...
+     hhh(e) = plot(1:2,stat_avgdB([e,e+4],2),mstl{e},'Color',cmap2(e,:),...
          'MarkerFaceColor',cmap2(e,:),'MarkerEdgeColor',[0 0 0],...
          'LineWidt',2,'MarkerSize',10);
 %     plot(xx:xx+1,stat(auindx,1),'s',...
@@ -167,12 +167,13 @@ end
 
 axis([0.75 2.25 0 .8])
 set(gca,'XTick',1:2,'XTickLabel',{'External','Anatomical'},'FontSize',16)
-legend(hh,{' || legs  || hands',' || legs  X hands',' X legs  || hands',' X legs  X hands'},...
+legend(hhh,{' || legs  || hands',' || legs  X hands',' X legs  || hands',' X legs  X hands'},...
     'box','off','FontSize',18)
 xlabel('Response mode','FontSize',18)
 ylabel('RT (mean+SD)','FontSize',18)
 % vline(2.5:2:15.5,':k')
 % tightfig
- 
- figname = sprintf('%sfigures%s%s%ss%d_%s_means_nodB',datapath,filesep,task,filesep,subj,task);
+figname = sprintf('%s%ss%d_LH2cross_meansNoInt',pathFigures,filesep,subj); 
 print(gcf,'-dpng',figname)
+close(gcf)
+clear stat_avgdB stat h perf hh
