@@ -130,7 +130,7 @@ if create_result == 1                                                       % cr
     %this are filled every block/trial
     result.trial_RT           = [];
     result.trial_blockType    = [];                                         % corresponding to block.blockType  
-    result.trial_crossed      = [];                                         % 0 - uncrossed ; 1 - crossed
+%     result.trial_crossed      = [];                                         % 0 - uncrossed ; 1 - crossed
     result.trial_response     = [];                                         % 0 - no response; 1 - left ; 2 - right (external)
     result.trial_limbside     = [];        
     result.trial_randSOA      = [];
