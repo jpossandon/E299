@@ -4,9 +4,9 @@
 % corresponding csv file
 % creates single and all subjects figures
 clear
-forceNew        = 1;                        % to creates everything anew
+forceNew        = 0;                        % to creates everything anew
 forceaddSubject = 0;                        % replace data of addSubject in alldata 
-addSubject      = [1,2,3];                  % subjects to process
+addSubject      = [4];                  % subjects to process
 exppath         = '/Users/jossando/trabajo/E299/';
 datapath        = fullfile(exppath,'data','LH2cross');
 alldataMatFile  = fullfile(datapath,'allSubject.mat');

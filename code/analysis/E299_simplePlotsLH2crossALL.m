@@ -50,6 +50,6 @@ legend(hhh,{' || legs  || hands',' || legs  X hands',' X legs  || hands',' X leg
 xlabel('Response mode','FontSize',18)
 ylabel('RT (mean+SEM)','FontSize',18)
 tightfig
-figname = sprintf('%s%sallSubjects_LH2cross_meansNoInt',pathFigures,filesep,subj); 
+figname = sprintf('%s%sallSubjects_LH2cross_meansNoInt',pathFigures,filesep); 
 print(gcf,'-dpng',figname)
 close(gcf)
