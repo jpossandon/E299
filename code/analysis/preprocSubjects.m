@@ -6,7 +6,7 @@
 clear
 forceNew        = 0;                        % to creates everything anew
 forceaddSubject = 0;                        % replace data of addSubject in alldata 
-addSubject      = [4];                  % subjects to process
+addSubject      = [5];                  % subjects to process
 exppath         = '/Users/jossando/trabajo/E299/';
 datapath        = fullfile(exppath,'data','LH2cross');
 alldataMatFile  = fullfile(datapath,'allSubject.mat');
@@ -27,7 +27,7 @@ for subj = addSubject
     load(subjResultFile)
     E299_simplePlotsLH2cross
     redux_result            = rmfield(result,{'block_done','t_perBlock','block_session',...
-                            'trial_crossed','created','block_crossed_legs','block_crossed_hands','blockType'});
+                            'created','block_crossed_legs','block_crossed_hands','blockType'});
     redux_result.subjIndx   = subj*ones(1,length(redux_result.trial_RT)); 
     isSubjinallData         = any(allData.subjIndx==subj);
     if isSubjinallData && ~forceaddSubject

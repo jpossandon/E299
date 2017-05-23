@@ -165,7 +165,7 @@ for e = 1:4
 %     xx = xx+2;
 end
 
-axis([0.75 2.25 0 .8])
+axis([0.75 2.25 0 1])
 set(gca,'XTick',1:2,'XTickLabel',{'External','Anatomical'},'FontSize',16)
 legend(hhh,{' || legs  || hands',' || legs  X hands',' X legs  || hands',' X legs  X hands'},...
     'box','off','FontSize',18)

@@ -43,7 +43,7 @@ for e = 1:4
          'LineWidt',2,'MarkerSize',10);
 end
 title(sprintf('N = %d',size(stat_avgdB,3)))
-axis([0.75 2.25 0 .8])
+axis([0.75 2.25 0 1])
 set(gca,'XTick',1:2,'XTickLabel',{'External','Anatomical'},'FontSize',16)
 legend(hhh,{' || legs  || hands',' || legs  X hands',' X legs  || hands',' X legs  X hands'},...
     'box','off','FontSize',18)
