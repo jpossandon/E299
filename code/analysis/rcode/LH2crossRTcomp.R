@@ -41,7 +41,7 @@ fileNameRoot = paste("trialRT",Tstr,sep="_") # for constructing output filenames
 if(logn){model = "trialRT_lognmodel.R"}
 if(!logn){model = "trialRT_normmodel.R"}
 source("code/analysis/rcode/utilities/get_trialLH2cross_data.R")
-source("code/analysis/rcode/utilities/rawPlot_LH2cross.R")
+source("code/analysis/rcode/plotting/rawPlot_LH2cross.R")
 # RUN THE CHAINS ------------------------------------------------------------------------
 source(paste("code/analysis/rcode/models/",model,sep=''), chdir=T)   
 source('code/analysis/rcode/utilities/init_chains.R')             # we need this for the Censor model
