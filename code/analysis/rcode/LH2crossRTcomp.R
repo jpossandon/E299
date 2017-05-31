@@ -21,9 +21,9 @@ rm(list=ls(all=TRUE))
 path       = "/Users/jossando/trabajo/E299"
 setwd(path)
 
-source("utilities/openGraphSaveGraph.R", chdir=T) # utilities by Kruschke from http://doingbayesiandataanalysis.blogspot.de/
-source("utilities/HDIofMCMC.R", chdir=T)
-source("utilities/DBDA2E-utilities.R", chdir=T)
+source("code/analysis/rcode/utilities/openGraphSaveGraph.R", chdir=T) # utilities by Kruschke from http://doingbayesiandataanalysis.blogspot.de/
+source("code/analysis/rcode/utilities/HDIofMCMC.R", chdir=T)
+source("code/analysis/rcode/utilities/DBDA2E-utilities.R", chdir=T)
 require(runjags)
 require(ggplot2)
 require(plyr)
@@ -40,11 +40,11 @@ fileNameRoot = paste("trialRT",Tstr,sep="_") # for constructing output filenames
 
 if(logn){model = "trialRT_lognmodel.R"}
 if(!logn){model = "trialRT_normmodel.R"}
-source("utilities/get_trialLH2cross_data.R")
-
+source("code/analysis/rcode/utilities/get_trialLH2cross_data.R")
+source("code/analysis/rcode/utilities/rawPlot_LH2cross.R")
 # RUN THE CHAINS ------------------------------------------------------------------------
-source(paste("models/",model,sep=''), chdir=T)   
-source('utilities/init_chains.R')             # we need this for the Censor model
+source(paste("code/analysis/rcode/models/",model,sep=''), chdir=T)   
+source('code/analysis/rcode/utilities/init_chains.R')             # we need this for the Censor model
 parameters    = c("mu","aS","SDa0S", "a", "aC", "nu", "sigma" ,"asigma" ,"aCsigma" )  
 
 adaptSteps    <- 5000     

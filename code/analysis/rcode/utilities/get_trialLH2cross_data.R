@@ -11,8 +11,9 @@ ch                <- datFrame$trial_crossed_hand
 ch                <- gsub('0','Hu',ch)
 ch                <- gsub('1','Hc',ch)
 datFrame$cond     <- as.factor(paste0(bt,cl,ch))
+datFrame$cond     <- factor(datFrame$cond,levels = c("ReLuHu","ReLuHc","ReLcHc","ReLcHu","RaLuHu","RaLuHc","RaLcHc","RaLcHu"))
 isNAN             <- is.nan(datFrame$trial_RT)
-areOK             <- !(isNAN)
+areOK             <- !(isNAN) & datFrame$trial_RT>.150 & datFrame$trial_correct==1
 datFrame$areOK    <- areOK
 
 if(logn)   {y     <- log(as.vector(datFrame$trial_RT[areOK]))}
@@ -28,11 +29,11 @@ NCond             <- length(unique(C))
 yM = mean( y, na.rm=T ); ySD = sd( y, na.rm=T )
 
 # zx = ( x - xM ) # / xSD 
-zy = ( y - yM )  / ySD # change to chekc the gamma distribution in which y values cannot be negative
+# zy = ( y - yM )  / ySD # change to chekc the gamma distribution in which y values cannot be negative
 #if(censor){censorLimit = ( censorLimit - yM )} # / ySD} # change to chekc the gamma distribution in which y values cannot be negative
 
 dataList = list(
-    y   = zy ,
+    y   = y ,
     C   = C , # condition
     S   = S, # subject condition
     Ndata = Ndata ,
