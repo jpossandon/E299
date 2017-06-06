@@ -7,13 +7,14 @@ xlims       <- c(-1.5,13.5)
 xpos[xpos>4]<- xpos[xpos>4]+gap
 jitterVal   <- runif(length(unique(datFrame$subjIndx)), max = 0.4)-.2
 dat1    = ddply(datFrame, .(subjIndx,cond), summarize,  meanRT=mean(trial_RT[areOK], na.rm=T), median=median(trial_RT[areOK], na.rm=T))
-openGraph(width = 8, height = 8) 
+openGraph(width = 8, height = 6) 
 p1 <- ggplot()  + 
       theme_bw() +
       theme(axis.line         = element_line(colour = "black"),
           axis.line.y         = element_line(color="black"),
           axis.line.x         = element_line(color="black"),
-          panel.grid.minor.y  = element_blank(),
+         # panel.grid.minor.y  = element_blank(),
+          panel.grid.major.x  = element_blank(),
           panel.border        = element_blank(),
           panel.background    = element_blank(),
           axis.title.x        = element_blank(),
@@ -29,7 +30,9 @@ for (ss in levels(dat1$cond)){
 #geom_violin(data=auxdat1,aes(x=Condition, y=meanRT),draw_quantiles = c(0.25, 0.5, 0.75),trim = FALSE,adjust = .9,scale='width')+
   geom_point(data=auxdat1,aes(x=Condition+jitterVal, y=meanRT),fill=cbbPalette[xs],size=2,shape=21, stroke=.1, alpha = .5) +
     geom_errorbar(data=auxdat1,aes(x=Condition, ymin=mean(meanRT)-std.error(meanRT), ymax=mean(meanRT)+std.error(meanRT)),color='black',width=.2,size=.3)+
-       geom_point(data=auxdat1,aes(x=Condition, y=mean(meanRT)),color='black',fill=cbbPalette[xs],size=3,shape=22, stroke=.5) 
+       geom_point(data=auxdat1,aes(x=Condition, y=mean(meanRT)),color='black',fill=cbbPalette[xs],size=3,shape=22, stroke=.5) +
+    geom_text(data=auxdat1,aes(x = Condition+.13, y=mean(meanRT)+.015,label = substring(sprintf('%.3f',mean(meanRT)),2)),hjust=0,
+              size=2)
     # geom_segment(data=auxdat1, aes(x=Condition-.25, y=mean(meanRT), xend=Condition+.25, yend=mean(meanRT)),
   #              color=cbbPalette[xs],size=1) +
     # geom_segment(data=auxdat1, aes(x=Condition-.25, y=median(meanRT), xend=Condition+.25, yend=median(meanRT)),
@@ -44,7 +47,7 @@ dat2$paircond <-c(1,2,3,4,1,2,3,4)
 for (ss in c(1,2,3,4)){
   p1$layers <- c(geom_line(data=subset(dat2, paircond %in% ss),aes(x=numcond, y=meanRT, group=paircond),colour=cbbPalette[ss],size=.5),p1$layers)
   p1 <- p1 + 
-     geom_text(data=NULL,aes(x = 6.5+gap), y = 1.25-ss/20,label = crossLabels[ss],hjust=0,
+     geom_text(data=NULL,aes(x = 6.5+gap), y = 1-ss/20,label = crossLabels[ss],hjust=0,
               size=6,color=cbbPalette[ss])
 }
 # line between subject data in the same response mode
@@ -57,9 +60,10 @@ p1$layers <- c(geom_line(data=auxdat1,aes(x=numcond+rep(jitterVal,each=4), y=mea
 
 
 p1 <- p1 + 
-  scale_y_continuous(limits=c(0,1.25),expand = c(0, 0)) +
+  scale_y_continuous(limits=c(0,1),expand = c(0, 0)) +
   scale_x_continuous(limits=xlims,expand = c(0, 0),
                      breaks=c(2.5,6.5+gap),labels=c('External','Anatomical'))+
+  ylab('Reaction Time (Mean +- SEM)')+
   ggtitle(sprintf('N = %d',length(unique(datFrame$subjIndx))))
   
 print(p1)
