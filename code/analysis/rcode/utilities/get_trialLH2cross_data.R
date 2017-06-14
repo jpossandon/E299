@@ -11,31 +11,75 @@ ch                <- datFrame$trial_crossed_hand
 ch                <- gsub('0','Hu',ch)
 ch                <- gsub('1','Hc',ch)
 datFrame$cond     <- as.factor(paste0(bt,cl,ch))
-datFrame$cond     <- factor(datFrame$cond,levels = c("ReLuHu","ReLuHc","ReLcHc","ReLcHu","RaLuHu","RaLuHc","RaLcHc","RaLcHu"))
+datFrame$cond     <- factor(datFrame$cond,levels = c("ReLuHu","ReLuHc","ReLcHu","ReLcHc","RaLuHu","RaLuHc","RaLcHu","RaLcHc"))
 isNAN             <- is.nan(datFrame$trial_RT)
 areOK             <- !(isNAN) & datFrame$trial_RT>.150 & datFrame$trial_correct==1
+datFrame$LegC     <- 1+as.numeric(datFrame$trial_crossed_legs)
+datFrame$HandC    <- 1+as.numeric(datFrame$trial_crossed_hand)
+datFrame$task     <- as.numeric(datFrame$trial_blockType)
+#datFrame$SRa      <- 1+as.numeric(datFrame$trial_blockType==2 | !xor(datFrame$trial_crossed_legs, datFrame$trial_crossed_hand)) # Stim-resp anat 0 - congruent, 1 -incongruent
+#datFrame$SRe      <- 1+as.numeric(datFrame$trial_blockType==1 | !xor(datFrame$trial_crossed_legs, datFrame$trial_crossed_hand)) # Stim-resp ext 0 - congruent, 1 -incongruent
 datFrame$areOK    <- areOK
+datFrameOK        <- datFrame[datFrame$areOK,]
 
-if(logn)   {y     <- log(as.vector(datFrame$trial_RT[areOK]))}
-if(!logn)  {y     <- as.vector(datFrame$trial_RT[areOK])}
+if(avgs){datFrameOK <-ddply(datFrameOK,.(subjIndx,LegC,HandC,task,cond),summarize,meanRT=mean(trial_RT, na.rm=T))
+y <- as.vector(datFrameOK$meanRT) }
+if(!avgs){y     <- as.vector(datFrameOK$trial_RT)}
 
-S                 <- as.numeric(datFrame$subjIndx); S <- S[areOK]        ## not to forget that this changes the number of the subject
-C                 <- as.numeric(datFrame$cond) ; C <- C[areOK]         # which conditions
 
+
+
+S                 <- as.numeric(datFrameOK$subjIndx)       ## not to forget that this changes the number of the subject
+C                 <- as.numeric(datFrameOK$cond)         # which conditions
+
+Cnames            <- levels(datFrameOK$cond)
+LegC              <- datFrameOK$LegC
+HandC             <- datFrameOK$HandC
+#SRa               <- datFrameOK$SRa
+#SRe               <- datFrameOK$SRe
+task              <- datFrameOK$task
 Ndata             <- length(y)
 NSubj             <- length(unique(S))
 NCond             <- length(unique(C))
 
-yM = mean( y, na.rm=T ); ySD = sd( y, na.rm=T )
+
+#if(logn)   {y     <- log(as.vector(datFrameOK$trial_RT[areOK]))}
+yMean = mean( y, na.rm=T ); ySD = sd( y, na.rm=T )
+
+# For prior on deflections:
+aGammaShRa = unlist( gammaShRaFromModeSD( mode=sd(y)/2 , sd=2*sd(y) ) )
+# For prior on cell SDs:
+if(factorial){
+cellSDs = aggregate( y , list(LegC,HandC,task) , FUN=sd )
+}
+if(!factorial){
+  cellSDs = aggregate( y , list(C) , FUN=sd )
+}
+cellSDs = cellSDs[ !is.na(cellSDs$x) ,]
+medianCellSD = median( cellSDs$x , na.rm=TRUE )
+sdCellSD = sd( cellSDs$x , na.rm=TRUE )
+show( paste( "Median cell SD: " , medianCellSD ) )
+show( paste( "StDev. cell SD: " , sdCellSD ) )
+sGammaShRa = unlist( gammaShRaFromModeSD( mode=medianCellSD , sd=2*sdCellSD ) )
 
 # zx = ( x - xM ) # / xSD 
 # zy = ( y - yM )  / ySD # change to chekc the gamma distribution in which y values cannot be negative
 #if(censor){censorLimit = ( censorLimit - yM )} # / ySD} # change to chekc the gamma distribution in which y values cannot be negative
 
 dataList = list(
-    y   = y ,
-    C   = C , # condition
-    S   = S, # subject condition
+    y     = y ,
+    yMean = yMean,
+    ySD   = ySD,
+    C     = C , # condition
+    LegC  = LegC,
+    HandC = HandC,
+    task  = task,
+#    SRa   = SRa,
+#    SRe   = SRe,
+    S     = S , # subject condition
     Ndata = Ndata ,
     NSubj = NSubj ,
-    NCond = NCond)
+    NCond = NCond,
+    medianCellSD = medianCellSD ,
+    aGammaShRa = aGammaShRa ,
+    sGammaShRa = sGammaShRa)

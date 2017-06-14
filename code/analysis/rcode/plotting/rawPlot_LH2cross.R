@@ -1,6 +1,6 @@
 # Data plot
 cbbPalette  <- c("#606060","#006D2C","#1F78B4","#E31A1C","#606060","#006D2C","#1F78B4","#E31A1C")
-crossLabels <- c("|| Legs  || Hands","|| Legs  X Hands","X Legs  X Hands","X Legs  || Hands")
+crossLabels <- c("|| Legs  || Hands","|| Legs  X Hands","X Legs  || Hands","X Legs  X Hands")
 xpos        <- c(1,2,3,4,5,6,7,8)
 gap         <- 3
 xlims       <- c(-1.5,13.5)
@@ -48,7 +48,7 @@ for (ss in c(1,2,3,4)){
   p1$layers <- c(geom_line(data=subset(dat2, paircond %in% ss),aes(x=numcond, y=meanRT, group=paircond),colour=cbbPalette[ss],size=.5),p1$layers)
   p1 <- p1 + 
      geom_text(data=NULL,aes(x = 6.5+gap), y = 1-ss/20,label = crossLabels[ss],hjust=0,
-              size=6,color=cbbPalette[ss])
+              size=5,color=cbbPalette[ss])
 }
 # line between subject data in the same response mode
 auxdat1 <-dat1[dat1$cond %in% levels(dat1$cond)[1:4],]
