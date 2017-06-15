@@ -14,12 +14,17 @@ else
     % read and write happens with s.inputSingleScan and s.OutputSingleScan 
     % for this to work without oppen 4 different sessions the output value
     % must include the information for the 3 ports in somthing like 
-    % [tactors(8bit) high-byte(8-bit) low-byte(8-bit)]
-    addDigitalChannel(s,'Dev2','Port9/Line6:7','InputOnly')                    % button port
-    addDigitalChannel(s,'Dev2','Port0/Line0:7','OutputOnly')                   % tactors port 
-    addDigitalChannel(s,'Dev2','Port1/Line0:7','OutputOnly')                   % digital output to CED high-byte
-    addDigitalChannel(s,'Dev2','Port2/Line0:7','OutputOnly')                   % digital output to CED low-byte
-    s.outputSingleScan([0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+    % [tactors(2bit) high-byte(trigger,1-bit) low-byte(info,8-bit)]
+    addDigitalChannel(s,'Dev2','Port9/Line6:7','InputOnly')                 % button port
+    addDigitalChannel(s,'Dev2','Port0/Line0:1','OutputOnly')                % tactors port 
+    addDigitalChannel(s,'Dev2','Port1/Line7','OutputOnly')                  % digital output to CED high-byte
+    addDigitalChannel(s,'Dev2','Port2/Line0:7','OutputOnly')                % digital output to CED low-byte
+    addDigitalChannel(s,'Dev2','Port3/Line4','OutputOnly')                  % data available input
+    tactbits   = [0 0];
+    trigbit    = [1];
+    inputByte  = [0 0 0 0 0 0 0 0];
+    dataAvbit  = [0];
+    s.outputSingleScan([tactbits,trigbit,inputByte,dataAvbit])
 end
 
 display('\nDone.')
