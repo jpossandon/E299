@@ -24,7 +24,7 @@ for ( cIdx in 1:length(contrastList) ){
 subj_dataALL[[cIdx]]     <- ddply(datFrameOK,.(subjIndx),summarize,value=mean(get("trial_RT")[cond==names(contrastList[cIdx])], na.rm=T))
 }
 
-multiPlot(Sample,contrastList = contrastList,contPplot = c(4,2),cbbPalette = cbbPalette,xlims = c(.2,.95),
+multiPlot(Sample,contrastList = contrastList,contPplot = c(4,2),cbbPalette = cbbPalette,xlims = c(.2,.95,.1),
           SData = TRUE, diffplot = FALSE, subj_dataALL)
 saveGraph(file=paste(getwd(),"/figures/LH2cross/bayes/",fileNameRoot,"_simpleEffect",sep=""), type="pdf")
 
@@ -44,7 +44,7 @@ for ( cIdx in 1:length(contrastList) ){
   subj_dataALLdiff[[cIdx]]     <- ddply(datFrameOK,.(subjIndx),summarize,
                                     value=mean(get("trial_RT")[cond==Cnames[difIndxs[1]]], na.rm=T)-mean(get("trial_RT")[cond==Cnames[difIndxs[2]]], na.rm=T))
 }
-multiPlot(Sample,contrastList = contrastList,contPplot = c(6,3),cbbPalette = cbbPalette,xlims = c(-.4,.26),
+multiPlot(Sample,contrastList = contrastList,contPplot = c(6,3),cbbPalette = cbbPalette,xlims = c(-.4,.26,.1),
           SData = TRUE, diffplot = TRUE, subj_dataALLdiff)
 saveGraph(file=paste(getwd(),"/figures/LH2cross/bayes/",fileNameRoot,"_simpleEffectDiff",sep=""), type="pdf")
 
@@ -64,6 +64,6 @@ contrastList = list(Ext = (gnames=="Ext"), Anat = (gnames=="Anat"),Ext_vs_Anat =
 
 cbbPalette  <- c("#606060","#606060","#606060","#606060","#606060","#606060","#606060","#606060","#606060")
 
-multiPlot(Sample,contrastList = contrastList,contPplot = c(3,3),cbbPalette = cbbPalette,xlims = c(-.2,.1),
+multiPlot(Sample,contrastList = contrastList,contPplot = c(3,3),cbbPalette = cbbPalette,xlims = c(-.2,.1,.05),
           SData = F, diffplot = c(F,F,T,F,F,T,F,F,T), subj_dataALL)
 saveGraph(file=paste(getwd(),"/figures/LH2cross/bayes/",fileNameRoot,"_MainEffect",sep=""), type="pdf")
