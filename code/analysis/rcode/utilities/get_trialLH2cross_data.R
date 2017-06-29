@@ -12,6 +12,9 @@ ch                <- gsub('0','Hu',ch)
 ch                <- gsub('1','Hc',ch)
 datFrame$cond     <- as.factor(paste0(bt,cl,ch))
 datFrame$cond     <- factor(datFrame$cond,levels = c("ReLuHu","ReLuHc","ReLcHu","ReLcHc","RaLuHu","RaLuHc","RaLcHu","RaLcHc"))
+
+datFrame          <- datFrame[ ! datFrame$subjIndx %in% rem_subjects,]
+
 isNAN             <- is.nan(datFrame$trial_RT)
 areOK             <- !(isNAN) & datFrame$trial_RT>.150 & datFrame$trial_correct==1
 datFrame$LegC     <- 1+as.numeric(datFrame$trial_crossed_legs)
@@ -22,12 +25,14 @@ datFrame$task     <- as.numeric(datFrame$trial_blockType)
 datFrame$areOK    <- areOK
 datFrameOK        <- datFrame[datFrame$areOK,]
 
-if(avgs){datFrameOK <-ddply(datFrameOK,.(subjIndx,LegC,HandC,task,cond),summarize,meanRT=mean(trial_RT, na.rm=T))
-y <- as.vector(datFrameOK$meanRT) }
-if(!avgs){y     <- as.vector(datFrameOK$trial_RT)}
-
-
-
+if(!perf){
+  if(avgs){datFrameOK <-ddply(datFrameOK,.(subjIndx,LegC,HandC,task,cond),summarize,meanRT=mean(trial_RT, na.rm=T))
+  y <- as.vector(datFrameOK$meanRT) }
+  if(!avgs){y     <- as.vector(datFrameOK$trial_RT)}
+}
+if(perf){
+  y <- datFrameOK$trial_correct
+}
 
 S                 <- as.numeric(datFrameOK$subjIndx)       ## not to forget that this changes the number of the subject
 C                 <- as.numeric(datFrameOK$cond)         # which conditions
@@ -42,30 +47,28 @@ Ndata             <- length(y)
 NSubj             <- length(unique(S))
 NCond             <- length(unique(C))
 
-
-#if(logn)   {y     <- log(as.vector(datFrameOK$trial_RT[areOK]))}
-yMean = mean( y, na.rm=T ); ySD = sd( y, na.rm=T )
-
-# For prior on deflections:
-aGammaShRa = unlist( gammaShRaFromModeSD( mode=sd(y)/2 , sd=2*sd(y) ) )
-# For prior on cell SDs:
-if(factorial){
-cellSDs = aggregate( y , list(LegC,HandC,task) , FUN=sd )
+if(!perf){
+  #if(logn)   {y     <- log(as.vector(datFrameOK$trial_RT[areOK]))}
+  yMean = mean( y, na.rm=T ); ySD = sd( y, na.rm=T )
+  
+  # For prior on deflections:
+  aGammaShRa = unlist( gammaShRaFromModeSD( mode=sd(y)/2 , sd=2*sd(y) ) )
+  # For prior on cell SDs:
+  if(factorial){
+  cellSDs = aggregate( y , list(LegC,HandC,task) , FUN=sd )
+  }
+  if(!factorial){
+    cellSDs = aggregate( y , list(C) , FUN=sd )
+  }
+  cellSDs = cellSDs[ !is.na(cellSDs$x) ,]
+  medianCellSD = median( cellSDs$x , na.rm=TRUE )
+  sdCellSD = sd( cellSDs$x , na.rm=TRUE )
+  show( paste( "Median cell SD: " , medianCellSD ) )
+  show( paste( "StDev. cell SD: " , sdCellSD ) )
+  sGammaShRa = unlist( gammaShRaFromModeSD( mode=medianCellSD , sd=2*sdCellSD ) )
 }
-if(!factorial){
-  cellSDs = aggregate( y , list(C) , FUN=sd )
-}
-cellSDs = cellSDs[ !is.na(cellSDs$x) ,]
-medianCellSD = median( cellSDs$x , na.rm=TRUE )
-sdCellSD = sd( cellSDs$x , na.rm=TRUE )
-show( paste( "Median cell SD: " , medianCellSD ) )
-show( paste( "StDev. cell SD: " , sdCellSD ) )
-sGammaShRa = unlist( gammaShRaFromModeSD( mode=medianCellSD , sd=2*sdCellSD ) )
 
-# zx = ( x - xM ) # / xSD 
-# zy = ( y - yM )  / ySD # change to chekc the gamma distribution in which y values cannot be negative
-#if(censor){censorLimit = ( censorLimit - yM )} # / ySD} # change to chekc the gamma distribution in which y values cannot be negative
-
+if(!perf){
 dataList = list(
     y     = y ,
     yMean = yMean,
@@ -82,4 +85,16 @@ dataList = list(
     NCond = NCond,
     medianCellSD = medianCellSD ,
     aGammaShRa = aGammaShRa ,
-    sGammaShRa = sGammaShRa)
+    sGammaShRa = sGammaShRa)}
+
+if(perf){
+  dataList = list(
+    y     = y ,
+   C     = C , # condition
+    LegC  = LegC,
+    HandC = HandC,
+    task  = task,
+     S     = S , # subject condition
+    Ndata = Ndata ,
+    NSubj = NSubj ,
+    NCond = NCond)}

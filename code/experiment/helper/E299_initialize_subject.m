@@ -7,7 +7,7 @@ function [exp,result,next_block] = E299_initialize_subject(Ppath)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 sNstr           = input('\nSubject number: ','s');
-sTtyp           = input('\nTrial type (LH2cross;singleLH;handEye): ','s');
+sTtyp           = input('\nTrial type (LH2cross;LH2crossHpos;singleLH;handEye): ','s');
 
 % sTtyp           = 'singleLH';
 Spath           = sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp);              % path to subject data folder
@@ -51,7 +51,7 @@ end
 if restart_flag                                                             % create folder an subject specific setting structure
     display(sprintf('\n\nNew subject s%s task %s,\n creating subject settings, result files and folder structure ...\n',sNstr,sTtyp))
     mkdir(sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp));
-    if strcmp(sTtyp,'singleLH') | strcmp(sTtyp,'LH2cross')
+    if strcmp(sTtyp,'singleLH') | strcmp(sTtyp,'LH2cross') | strcmp(sTtyp,'LH2crossHpos')
         exp.nBlocks             = 96;                                                   % total number of blocks
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         exp.maxRT               = 2;
@@ -62,6 +62,9 @@ if restart_flag                                                             % cr
         exp.PC.beta             = 3.5;
         exp.PC.delta            = 0.02;
         exp.PC.gamma            = 0.5;
+        if strcmp(sTtyp,'LH2crossHpos')
+            exp.nTrials_perBlock    = 50; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+        end
     elseif strcmp(sTtyp,'handEye')
         exp.nBlocks             = 96;                                                   % total number of blocks
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
@@ -170,6 +173,39 @@ if create_result == 1                                                       % cr
            result.blockType             = repmat(reshape(repmat([2 1],12,1),[1,24]),...    % 1 - answer external 2- answer anatomical
                                             1,exp.nBlocks/24); 
         end
+        result.trial_int                = []; 
+        result.trial_actualIntensity    = [];
+    elseif strcmp(sTtyp,'LH2crossHpos')
+        % to get the balancing of hand and leg block crossing, with four
+        % different conditions that can be arranged (permuted) in 24
+        % different way. For complete balance with response mode and hand position
+        % (if only center and right) we need 4 times the amount of subjects
+        % subjects (this is all overkill, since we are not going to
+        % have hundreds of subject ...)
+        pb              = [perms([3 2 1 0]);perms([0 1 2 3]);...
+                            perms([3 2 1 0]);perms([0 1 2 3])];             % get (double) all permutations, #1-4 correspond to the 4 conditions of hand and leg crossing, each number is a 2digit binary number coding whether hand and legs are crossed
+        sind            = mod(str2num(sNstr)-1,96)+1;                      % which of the block ordering subject sNstr gets, this formulation works for any subject number
+        auxbin          = dec2bin(pb(sind,:));                             % this two lines transform it to the coding of block_crossed below
+        auxbin          = str2num(auxbin(:));
+        result.block_crossed_legs       = repmat(auxbin(1:4)',...          % 0 - uncrossed ; 1 - crossed 
+                                            1,exp.nBlocks/4);
+        result.block_crossed_hands      = repmat(auxbin(5:8)',...          % 0 - uncrossed ; 1 - crossed 
+                                            1,exp.nBlocks/4);                        
+        if mod(str2num(sNstr),2)        % even subjects start with external blocks  
+           result.blockType             = repmat(reshape(repmat([1 2],24,1),[1,48]),...    % 1 - answer external 2- answer anatomical
+                                            1,exp.nBlocks/48); 
+        else                            % odd subjects start with anatomical blocks
+           result.blockType             = repmat(reshape(repmat([2 1],24,1),[1,48]),...    % 1 - answer external 2- answer anatomical
+                                            1,exp.nBlocks/48); 
+        end
+        
+        handrandaux       =  repmat([1 1 1 1 0 0 0 0],1, exp.nBlocks/8);      % every two subjects changes the hand ordering
+        if handrandaux(str2num(sNstr))
+            result.block_handpos              = repmat([2 2 2 2 3 3 3 3],1, exp.nBlocks/8); %1 - left ; 2 - central ; 3 - right 
+        else
+            result.block_handpos              = repmat([3 3 3 3 2 2 2 2],1, exp.nBlocks/8);
+        end
+        
         result.trial_int                = []; 
         result.trial_actualIntensity    = [];
     end

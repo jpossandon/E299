@@ -30,10 +30,12 @@ require(plyr)
 require(yarrr)
 library(extrafont)
 
+perf          = FALSE
 logn          = FALSE                            # log-normal data model
 avgs          = FALSE
 factorial     = TRUE
 
+rem_subjects = c(3,9,13)                         # reasons to remove: subject 3 the button did not work well, subject 9 stimulator stop working for the last four block, s13 stimulator broke down and subject did not feel stimulation for long periods
 if(avgs){Tstr='subjMeans'}
 if(!avgs){Tstr='allData'}
 if(factorial){fstr='factorial'}
@@ -41,15 +43,21 @@ if(!factorial){fstr='simpleEffect'}
 #if(logn){Tstr='logNorm'}
 #if(!logn){Tstr='Norm'}
 
-fileNameRoot = paste("trialRT_ANOVA",Tstr,fstr,sep="_") # for constructing output filenames
+if(perf){fileNameRoot = paste("bern_ANOVA",Tstr,fstr,sep="_")}
+if(!perf){fileNameRoot = paste("trialRT_ANOVA",Tstr,fstr,sep="_")} # for constructing output filenames
 
 #model       = "anova_legC_SRa_SRE.R"
-if(avgs&factorial){model = "trialRT_ANOVA_subjMeans.R"}
-if(!avgs&factorial){model = "trialRT_ANOVA_allData.R"}
-if(!avgs&!factorial){model = "trialRT_ANOVA_allData_simpleEffect.R"}
+if(perf){if(!avgs&factorial){model = "bern_ANOVA_allData.R"}
+}
+if(!perf){
+  if(avgs&factorial){model = "trialRT_ANOVA_subjMeans.R"}
+  if(!avgs&factorial){model = "trialRT_ANOVA_allData.R"}
+  if(!avgs&!factorial){model = "trialRT_ANOVA_allData_simpleEffect.R"}
+}
 
 source("code/analysis/rcode/utilities/get_trialLH2cross_data.R")
-source("code/analysis/rcode/plotting/rawPlot_LH2cross.R")
+if(!perf){source("code/analysis/rcode/plotting/rawPlot_LH2cross.R")}
+if(perf){source("code/analysis/rcode/plotting/rawPlotperf_LH2cross.R")}
 # RUN THE CHAINS ------------------------------------------------------------------------
 #source(paste("code/analysis/rcode/models/",model,sep=''), chdir=T)   
 #source('code/analysis/rcode/utilities/init_chains.R')             # we need this for the Censor model
@@ -70,7 +78,7 @@ runjagsModel = run.jags(paste(path,"/code/analysis/rcode/models/",model,sep=""),
                         psrf.target=1.05)#inits=initsList,
 
 # CHECK MODEL CONVERGENCE ---------------------------------------------------------------
-checkConvergence = TRUE
+checkConvergence = FALSE
 checkPartialPath = "/figures/LH2cross/bayes/checks/"
 source("code/analysis/rcode/utilities/convergenceChecks.R", chdir=T)
 
@@ -80,7 +88,7 @@ save(mcmcChain, file=paste(path,"/data/LH2cross/mcmcData/",fileNameRoot,'.Rdata'
 
 # POSTERIOR DISTRIBUTIONS PLOTTING ------------------------------------------------------
 
-#load(file=paste(path,"/mcmcData/",fileNameRoot,'.Rdata',sep=''))
+load(file=paste(path,"/data/LH2cross/mcmcData/",fileNameRoot,'.Rdata',sep=''))
 #param = "RTf"
 source("code/analysis/rcode/plotting/plotPost_trialRT_ANOVA.R")
 

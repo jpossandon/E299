@@ -11,7 +11,7 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
     conmat[cIdx,]  <- contrast %*% Sample
   }
   
-  openGraph(width=4*contPplot[2] , height=contPplot[1]/2)
+  openGraph(width=3.2*contPplot[2] , height=3.2/3*contPplot[1])
   pltList     <- list()
   # from here the individual plots
   for ( cIdx in 1:nContrasts) {
@@ -22,8 +22,8 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
       densCurve   = density(auxdata, adjust=2 )
       maxContdens = append(maxContdens,max(densCurve$y))
     }
-    maxContdens <- 1.1*max(maxContdens)
-    negLimY     <- -.5
+    maxContdens <- 1.05*max(maxContdens)
+    negLimY     <- -.6
     if (SData){
       ylims   <-c(negLimY*maxContdens,maxContdens)}else{
         ylims   <-c(0,maxContdens)}
@@ -45,7 +45,7 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
     
     if (cIdx<=length(diffplot)){cIdxdiff <- cIdx}else{cIdxdiff <-length(diffplot)}
     if (diffplot[cIdxdiff]){alp = .5
-    if(!(0>HDI[1]&0<HDI[2])){hdifill =rgb(1,0,0, names = NULL, maxColorValue = 1)}else{hdifill = "#333333"}
+    if(!(0>HDI[1]&0<HDI[2])){hdifill = "black"}else{hdifill = "#cccccc"}
     }else{alp=1}
     
     hdy <- max(c(d[which(d[,1]< HDIytext [1])[1],2],d[which(d[,1]> HDIytext[2])[1],2]))
@@ -81,13 +81,13 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
                  colour = "#000000",fill='red', size = .75,stroke=.2)+
       geom_text(data = NULL, x = mean(auxdata), y = max(densCurve$y),
                 hjust=-.7,vjust=.8, size=1.5,family="Helvetica",
-                label = sprintf("%1.2f",mean(auxdata)))+
+                label = sprintf("%1.3f",mean(auxdata)))+
       geom_text(data = NULL, x = HDIxtext[1], y = hdy,
                 hjust=1,vjust=0, size=1.5,family="Helvetica",
-                label = sprintf("%1.2f",HDI[1]))+
+                label = sprintf("%1.3f",HDI[1]))+
       geom_text(data = NULL, x = HDIxtext[2], y = hdy,
                 hjust=0,vjust=0, size=1.5,family="Helvetica",
-                label = sprintf("%1.2f",HDI[2]))+
+                label = sprintf("%1.3f",HDI[2]))+
       geom_text(data = NULL, x = xlms[1]+.01*(xlms[2]-xlms[1]), y = 0+.7*ylims[2],#+.8*max(ylims),
                 hjust=0,vjust=1, size=2,family="Helvetica",
                 label = ttl)+
@@ -98,12 +98,12 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
     if(SData){
       if (cIdx<=length(subj_dataALL)){
         subj_data <- subj_dataALL[[cIdx]]
-        qua = data.frame(x=quantile(subj_data$value, probs = c(.25,.75), na.rm = TRUE),y=c(.75*ylims[1],.75*ylims[1]),g='hor_line')
-        quamed  <-  data.frame(x=quantile(subj_data$value, probs = c(.5,.5), na.rm = TRUE),y=c(.6*ylims[1],.9*ylims[1]),g='median')
-        quamean  <- data.frame(x=mean(subj_data$value, na.rm = TRUE),y=c(.6*ylims[1],.9*ylims[1]),g='mean')
+        qua = data.frame(x=quantile(subj_data$value, probs = c(.25,.75), na.rm = TRUE),y=c(.8*ylims[1],.8*ylims[1]),g='hor_line')
+        quamed  <-  data.frame(x=quantile(subj_data$value, probs = c(.5,.5), na.rm = TRUE),y=c(.7*ylims[1],.9*ylims[1]),g='median')
+        quamean  <- data.frame(x=mean(subj_data$value, na.rm = TRUE),y=c(.7*ylims[1],.9*ylims[1]),g='mean')
         
         p1 <- p1 + 
-          geom_point(data = subj_data,aes(x=value,y=.3*negLimY*maxContdens),shape=21,colour = "#2D2D2D",fill=hdifill, size = 1,stroke=.1,position = position_jitter(height = -.3*ylims[1]))+
+          geom_point(data = subj_data,aes(x=value,y=.4*negLimY*maxContdens),shape=21,colour = "#2D2D2D",fill=hdifill, size = 2,stroke=.2,position = position_jitter(height = -.4*ylims[1]))+
           geom_line(data=qua,aes(x,y),color=hdifill, size=.6)+
           geom_line(data=quamed,aes(x,y),color=hdifill, size=.6)+
           geom_line(data=quamean,aes(x,y),color="black", size=.6)
