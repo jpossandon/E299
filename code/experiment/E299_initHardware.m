@@ -4,28 +4,28 @@
 % port 9 - last two bits
 
 display(sprintf('\nSetting-up digital I/O card'))
-if verLessThan('matlab', 'R2016a')
+% if verLessThan('matlab', 'R2016a')
     DIO    = digitalio('nidaq','Dev1');                                        % control the DI/O nidaq card PCI 6509  
     lines  = addline(DIO,0:7,0,'Out');                                         % Output thorugh port 0 
     lines  = addline(DIO,6:7,9,'In');                                          %Input thorugh port 9, for button press 
     putvalue(DIO.line(1:8),0)                                                  % flush it   
-else
-    s = daq.createSession('ni');
-    % read and write happens with s.inputSingleScan and s.OutputSingleScan 
-    % for this to work without oppen 4 different sessions the output value
-    % must include the information for the 3 ports in somthing like 
-    % [tactors(2bit) high-byte(trigger,1-bit) low-byte(info,8-bit)]
-    addDigitalChannel(s,'Dev2','Port9/Line6:7','InputOnly')                 % button port
-    addDigitalChannel(s,'Dev2','Port0/Line0:1','OutputOnly')                % tactors port 
-    addDigitalChannel(s,'Dev2','Port1/Line7','OutputOnly')                  % digital output to CED high-byte
-    addDigitalChannel(s,'Dev2','Port2/Line0:7','OutputOnly')                % digital output to CED low-byte
-    addDigitalChannel(s,'Dev2','Port3/Line4','OutputOnly')                  % data available input
-    tactbits   = [0 0];
-    trigbit    = [1];
-    inputByte  = [0 0 0 0 0 0 0 0];
-    dataAvbit  = [0];
-    s.outputSingleScan([tactbits,trigbit,inputByte,dataAvbit])
-end
+% else
+%     s = daq.createSession('ni');
+%     % read and write happens with s.inputSingleScan and s.OutputSingleScan 
+%     % for this to work without oppen 4 different sessions the output value
+%     % must include the information for the 3 ports in somthing like 
+%     % [tactors(2bit) high-byte(trigger,1-bit) low-byte(info,8-bit)]
+%     addDigitalChannel(s,'Dev2','Port9/Line6:7','InputOnly')                 % button port
+%     addDigitalChannel(s,'Dev2','Port0/Line0:1','OutputOnly')                % tactors port 
+%     addDigitalChannel(s,'Dev2','Port1/Line7','OutputOnly')                  % digital output to CED high-byte
+%     addDigitalChannel(s,'Dev2','Port2/Line0:7','OutputOnly')                % digital output to CED low-byte
+%     addDigitalChannel(s,'Dev2','Port3/Line4','OutputOnly')                  % data available input
+%     tactbits   = [0 0];
+%     trigbit    = [1];
+%     inputByte  = [0 0 0 0 0 0 0 0];
+%     dataAvbit  = [0];
+%     s.outputSingleScan([tactbits,trigbit,inputByte,dataAvbit])
+% end
 
 display('\nDone.')
 

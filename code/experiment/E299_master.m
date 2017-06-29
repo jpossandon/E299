@@ -47,7 +47,8 @@ while next_block
         error(sprintf('\nYou did not anser ''c'' or ''s''\nFinishing program\n'))
     end
     next_block = next_block+1;
-end    
+end   
+
 
 %%
 PsychPortAudio('Close');

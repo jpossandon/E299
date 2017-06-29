@@ -5,7 +5,7 @@
 %     sCont = input('\n Continue with next block (y/n)','s');
 nTrials      = result.t_perBlock(next_block);
 next_trial   = sum(result.t_perBlock(1:next_block-1))+1;
-auxtint      = repmat([1 1 2 2],1,nTrials/4);
+auxtint      = repmat([1 1 2 2],1,nTrials/2);
 auxtlimb     = repmat([1 2],1,nTrials/2);
 aunxrnd      = randperm(nTrials);
 result.trial_int(next_trial:next_trial+nTrials-1)           = auxtint(aunxrnd);
@@ -13,7 +13,7 @@ result.trial_randSOA(next_trial:next_trial+nTrials-1)       = exp.soa_fix+rand(1
 result.trial_limbside(next_trial:next_trial+nTrials-1)      = auxtlimb(aunxrnd);
 result.trial_blockType(next_trial:next_trial+nTrials-1)     = repmat(result.blockType(next_block),1,nTrials);                                         % 0 - uncrossed ; 1 - crossed
 result.trial_crossed_legs(next_trial:next_trial+nTrials-1)  = repmat(result.block_crossed_legs(next_block),1,nTrials);                                         % 0 - uncrossed ; 1 - crossed
-result.trial_crossed_hand(next_trial:next_trial+nTrials-1)  = repmat(result.block_handpos(next_block),1,nTrials);  
+result.trial_crossed_hand(next_trial:next_trial+nTrials-1)  = repmat(result.block_crossed_hands(next_block),1,nTrials);  
 result.trial_handpos(next_trial:next_trial+nTrials-1)       = repmat(result.block_handpos(next_block),1,nTrials);  
 
 for t= next_trial:next_trial+nTrials-1

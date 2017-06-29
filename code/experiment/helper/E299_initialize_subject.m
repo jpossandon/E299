@@ -53,7 +53,7 @@ if restart_flag                                                             % cr
     mkdir(sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp));
     if strcmp(sTtyp,'singleLH') | strcmp(sTtyp,'LH2cross') | strcmp(sTtyp,'LH2crossHpos')
         exp.nBlocks             = 96;                                                   % total number of blocks
-        exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+        exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block), it has to be a number divisible bz 4
         exp.maxRT               = 2;
         exp.soa_fix             = 1;
         exp.PC.tGuess           = -1;
@@ -63,7 +63,7 @@ if restart_flag                                                             % cr
         exp.PC.delta            = 0.02;
         exp.PC.gamma            = 0.5;
         if strcmp(sTtyp,'LH2crossHpos')
-            exp.nTrials_perBlock    = 50; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+            exp.nTrials_perBlock    = 52; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         end
     elseif strcmp(sTtyp,'handEye')
         exp.nBlocks             = 96;                                                   % total number of blocks
@@ -199,7 +199,7 @@ if create_result == 1                                                       % cr
                                             1,exp.nBlocks/48); 
         end
         
-        handrandaux       =  repmat([1 1 1 1 0 0 0 0],1, exp.nBlocks/8);      % every two subjects changes the hand ordering
+        handrandaux       =  repmat([1 1 0 0],1, 200);      % every two subjects changes the hand ordering
         if handrandaux(str2num(sNstr))
             result.block_handpos              = repmat([2 2 2 2 3 3 3 3],1, exp.nBlocks/8); %1 - left ; 2 - central ; 3 - right 
         else
