@@ -63,7 +63,7 @@ if restart_flag                                                             % cr
         exp.PC.delta            = 0.02;
         exp.PC.gamma            = 0.5;
         if strcmp(sTtyp,'LH2crossHpos')
-            exp.nTrials_perBlock    = 52; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+            exp.nTrials_perBlock    = 60; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         end
     elseif strcmp(sTtyp,'handEye')
         exp.nBlocks             = 96;                                                   % total number of blocks
