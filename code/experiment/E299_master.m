@@ -17,7 +17,7 @@ Ppath                   = splitStr{1}; clear splitStr
 E299_initHardware
 
 % if ~exp.psych_curve
-if strcmp(exp.sTtyp,'singleLH') || strcmp(exp.sTtyp,'LH2cross') || strcmp(exp.sTtyp,'LH2crossHpos')
+if strcmp(exp.sTtyp,'singleLH') || strcmp(exp.sTtyp,'LH2cross') || strcmp(exp.sTtyp,'LH2Anti') || strcmp(exp.sTtyp,'LH2crossHpos')
     exp = E299_psych(exp,pahandle,DIO,wave);
 end
 % end
@@ -35,7 +35,7 @@ while next_block
             E299_block
         elseif strcmp(exp.sTtyp,'handEye')
             E299_blockHE
-        elseif strcmp(exp.sTtyp,'LH2cross')
+        elseif strcmp(exp.sTtyp,'LH2cross') || strcmp(exp.sTtyp,'LH2crossAnti')
             E299_blockLH2
         elseif strcmp(exp.sTtyp,'LH2crossHpos')
             E299_blockLH2Hpos

@@ -7,7 +7,7 @@ function [exp,result,next_block] = E299_initialize_subject(Ppath)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 sNstr           = input('\nSubject number: ','s');
-sTtyp           = input('\nTrial type (LH2cross;LH2crossHpos;singleLH;handEye): ','s');
+sTtyp           = input('\nTrial type (LH2cross;LH2crossAnti;LH2crossHpos;singleLH;handEye): ','s');
 
 % sTtyp           = 'singleLH';
 Spath           = sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp);              % path to subject data folder
@@ -51,7 +51,7 @@ end
 if restart_flag                                                             % create folder an subject specific setting structure
     display(sprintf('\n\nNew subject s%s task %s,\n creating subject settings, result files and folder structure ...\n',sNstr,sTtyp))
     mkdir(sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp));
-    if strcmp(sTtyp,'singleLH') | strcmp(sTtyp,'LH2cross') | strcmp(sTtyp,'LH2crossHpos')
+    if strcmp(sTtyp,'singleLH') || strcmp(sTtyp,'LH2cross') || strcmp(sTtyp,'LH2crossAnti') || strcmp(sTtyp,'LH2crossHpos')
         exp.nBlocks             = 96;                                                   % total number of blocks
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block), it has to be a number divisible bz 4
         exp.maxRT               = 2;
@@ -152,7 +152,7 @@ if create_result == 1                                                       % cr
                                     1,exp.nBlocks/2);    
         result.blockType          = repmat([1 1 2 2],...                    % 1 - ezes open 2- eyes closed
                                      1,exp.nBlocks/4);    
-    elseif strcmp(sTtyp,'LH2cross')
+    elseif strcmp(sTtyp,'LH2cross') || strcmp(sTtyp,'LH2crossAnti')
         % to get the balancing of hand and leg block crossing, with four
         % different conditions that can be arranged (permuted) in 24
         % different way. For complete balance with response mode we need

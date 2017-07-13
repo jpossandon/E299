@@ -12,6 +12,8 @@ ch                <- gsub('0','Hu',ch)
 ch                <- gsub('1','Hc',ch)
 datFrame$cond     <- as.factor(paste0(bt,cl,ch))
 datFrame$cond     <- factor(datFrame$cond,levels = c("ReLuHu","ReLuHc","ReLcHu","ReLcHc","RaLuHu","RaLuHc","RaLcHu","RaLcHc"))
+#datFrame$trialnr  <- rep(rep(seq(1,10,1),rep(10,10)),dim(datFrame)[1]/100)
+datFrame$trialnr  <- rep(rep(seq(2.5,100,5),rep(5,20)),dim(datFrame)[1]/100)
 
 datFrame          <- datFrame[ ! datFrame$subjIndx %in% rem_subjects,]
 
@@ -34,7 +36,7 @@ if(perf){
   y <- datFrameOK$trial_correct
 }
 
-S                 <- as.numeric(datFrameOK$subjIndx)       ## not to forget that this changes the number of the subject
+S                 <- as.numeric(as.factor(paste0("c",datFrameOK$subjIndx)))       ## not to forget that this changes the number of the subject
 C                 <- as.numeric(datFrameOK$cond)         # which conditions
 
 Cnames            <- levels(datFrameOK$cond)

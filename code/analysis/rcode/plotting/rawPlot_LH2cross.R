@@ -68,3 +68,60 @@ p1 <- p1 +
   
 print(p1)
 saveGraph(file=paste(getwd(),"/figures/LH2cross/allSubjectsMeans",sep=""), type="pdf")
+
+# by truial order
+#datext    = ddply(datFrame[datFrame$cond %in% c("ReLuHu","ReLuHc","ReLcHu","ReLcHc"),]
+#                  , .(subjIndx,cond,trialnr), summarize, 
+#                  meanRT=mean(trial_RT[areOK], na.rm=T), median=median(trial_RT[areOK], na.rm=T))
+#datext$subjCond = as.factor(paste0(datext$subjIndx,datext$cond))
+
+dataux = list()
+dataux[[1]]    = ddply(datFrame[datFrame$cond %in% c("ReLuHu","ReLuHc","ReLcHu","ReLcHc"),]
+                  , .(cond,trialnr), summarize, 
+                  meanRT=mean(trial_RT[areOK], na.rm=T), 
+                  sem=sd(trial_RT[areOK], na.rm=T)/sqrt(length(unique(datFrame$subjIndx))))
+dataux[[2]]    = ddply(datFrame[datFrame$cond %in% c("RaLuHu","RaLuHc","RaLcHu","RaLcHc"),]
+                  , .(cond,trialnr), summarize, 
+                  meanRT=mean(trial_RT[areOK], na.rm=T), 
+                  sem=sd(trial_RT[areOK], na.rm=T)/sqrt(length(unique(datFrame$subjIndx))))
+labelsResp=c('External','Anatomical')
+pltList = list()
+for (dT in c(1,2)){
+p1 <- ggplot()  + 
+  theme_bw() +
+  theme(axis.line         = element_line(colour = "black"),
+        axis.line.y         = element_line(color="black"),
+        axis.line.x         = element_line(color="black"),
+        # panel.grid.minor.y  = element_blank(),
+        panel.grid.major.x  = element_blank(),
+        panel.border        = element_blank(),
+        panel.background    = element_blank(),
+      #  axis.title.x        = element_blank(),
+        legend.position     ="none",
+        plot.margin         = unit(c(2, 2, 2, 2), "mm"),
+        text                = element_text(family="Helvetica",size=16))
+
+p1 <- p1 + 
+  geom_line(data=dataux[[dT]],aes(x=trialnr,y=meanRT,color=cond))+
+  geom_ribbon(data=dataux[[dT]],aes(x=trialnr,ymin=meanRT-sem,ymax=meanRT+sem,fill=cond),alpha=0.3)+
+  geom_point(data=dataux[[dT]],aes(x=trialnr,y=meanRT,color=cond))
+if (dT==2){
+  for (ss in c(1,2,3,4)){
+     p1 <- p1 + 
+      geom_text(data=NULL,aes(x = 50), y = .9-ss/25,label = crossLabels[ss],hjust=0,
+              size=5,color=cbbPalette[ss])
+  }
+}
+p1 <- p1 + 
+  scale_fill_manual(values=cbbPalette)+
+  scale_color_manual(values=cbbPalette)+
+  scale_y_continuous("RT+-SEM",limits=c(.3,.9),expand = c(0, 0)) +
+ scale_x_continuous(labelsResp[dT],limits=c(0,100),expand = c(0, .75)) +
+  ggtitle(sprintf('N = %d',length(unique(datFrame$subjIndx))))
+pltList[[dT]] <- p1
+}
+
+openGraph(width = 8, height = 4) 
+
+do.call(grid.arrange, c(pltList, nrow=1, ncol=2, as.table = FALSE)) 
+saveGraph(file=paste(getwd(),"/figures/LH2cross/allSubjectsbytrial",sep=""), type="pdf")

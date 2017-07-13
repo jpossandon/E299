@@ -80,11 +80,18 @@ for t= next_trial:next_trial+nTrials-1
          (result.trial_crossed_legs(t) == 1 && result.trial_crossed_hand(t) == 1 && result.trial_limbside(t) == 2 && result.trial_blockType(t) == 1 && result.trial_response(t) == 1) || ...
          (result.trial_crossed_legs(t) == 1 && result.trial_crossed_hand(t) == 1 && result.trial_limbside(t) == 2 && result.trial_blockType(t) == 2 && result.trial_response(t) == 1)
          
+          
          result.trial_correct(t)      = 1;
-         display(sprintf('Correct\n'))
-      else 
+       else 
          result.trial_correct(t)      = 0;
-         display(sprintf('Incorrect\n'))
+       end
+       if strcmp(exp.sTtyp,'LH2crossAnti')
+           result.trial_correct(t)      = ~result.trial_correct(t);
+       end
+       if result.trial_correct(t) == 1 
+           display(sprintf('Correct\n'))
+       elseif result.trial_correct(t) == 0 
+           display(sprintf('Incorrect\n'))
        end
     end
 end

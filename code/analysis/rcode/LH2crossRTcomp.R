@@ -68,7 +68,7 @@ adaptSteps    <- 5000
 burnInSteps   <- 5000     
 nChains       <- 4         
 numSavedSteps <- 5000     
-thinSteps     <- 4       
+thinSteps     <- 2       
 
 runjagsModel = run.jags(paste(path,"/code/analysis/rcode/models/",model,sep=""), monitor=parameters, data=dataList,
                         adapt=adaptSteps, n.chains=nChains, thin=thinSteps,
