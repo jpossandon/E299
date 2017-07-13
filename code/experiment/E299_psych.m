@@ -100,7 +100,7 @@ E299_PsychCurve
 if strcmp(exp.sTtyp,'singleLH') 
     exp.intensitites = [(3/20+QuestMean(q(1))) (6/20+QuestMean(q(1))) (9/20+QuestMean(q(1)));
                     (3/20+QuestMean(q(2))) (6/20+QuestMean(q(2))) (9/20+QuestMean(q(1)))];
-elseif strcmp(exp.sTtyp,'LH2cross')  || strcmp(exp.sTtyp,'LH2crossHpos')
+elseif strcmp(exp.sTtyp,'LH2cross')  || strcmp(exp.sTtyp,'LH2crossHpos') || strcmp(exp.sTtyp,'LH2crossAnti')
     % 20.04.17, change to ~3.5 and ~14 dB (1.5 and 5 times intensity, log10(1.5)*20)
     % before it was 3 and 15 (to be used -+ .5 dB)
     % 03.05.17, change to ~6 and ~15.5 dB (2 and 6 times intensity, log10(2)*20)
