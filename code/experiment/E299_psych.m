@@ -106,5 +106,8 @@ elseif strcmp(exp.sTtyp,'LH2cross')  || strcmp(exp.sTtyp,'LH2crossHpos') || strc
     % 03.05.17, change to ~6 and ~15.5 dB (2 and 6 times intensity, log10(2)*20)
     exp.intensitites = [(log10(2)+QuestMean(q(1))) (log10(6)+QuestMean(q(1)));
                     (log10(2)+QuestMean(q(2))) (log10(6)+QuestMean(q(2)))];
+elseif strcmp(exp.sTtyp,'Mask')            % only one intensity 6dB from thresho;d
+    exp.intensitites = [(log10(2)+QuestMean(q(1))) ;
+                    (log10(2)+QuestMean(q(2)))];
 end
 exp.psych_curve = 1;

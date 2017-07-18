@@ -89,4 +89,10 @@ elseif strcmp(exp.sTtyp,'LH2crossHpos')
          display(sprintf('\n\nBLOCK # %d START,\nLEG POSITION IS CROSSED\nHAND POSITION IS TO THE RIGHT AND CROSSED\nINSTRUCTION IS TO RESPOND TO THE SAME LIMB SIDE\n',sum(result.block_done)+1))
     
     end
+elseif strcmp(exp.sTtyp,'Mask')
+    if result.block_crossed(next_block)==0 
+        display(sprintf('\n\nBLOCK # %d START,\nHAND POSITION IS UNCROSSED\n INSTRUCTION IS TO RESPOND WITH THE SAME HAND\n',sum(result.block_done)+1))
+    elseif result.block_crossed(next_block)==1
+        display(sprintf('\n\nBLOCK # %d START,\nHAND POSITION IS CROSSED\n INSTRUCTION IS TO RESPOND WITH THE SAME HAND\n',sum(result.block_done)+1))
+    end
 end

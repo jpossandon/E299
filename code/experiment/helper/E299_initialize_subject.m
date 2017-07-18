@@ -7,7 +7,7 @@ function [exp,result,next_block] = E299_initialize_subject(Ppath)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 sNstr           = input('\nSubject number: ','s');
-sTtyp           = input('\nTrial type (LH2cross;LH2crossAnti;LH2crossHpos;singleLH;handEye): ','s');
+sTtyp           = input('\nTrial type (LH2cross;LH2crossAnti;Mask;LH2crossHpos;singleLH;handEye): ','s');
 
 % sTtyp           = 'singleLH';
 Spath           = sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp);              % path to subject data folder
@@ -51,7 +51,8 @@ end
 if restart_flag                                                             % create folder an subject specific setting structure
     display(sprintf('\n\nNew subject s%s task %s,\n creating subject settings, result files and folder structure ...\n',sNstr,sTtyp))
     mkdir(sprintf('%sdata%s%s%ss%s_%s',Ppath,filesep,sTtyp,filesep,sNstr,sTtyp));
-    if strcmp(sTtyp,'singleLH') || strcmp(sTtyp,'LH2cross') || strcmp(sTtyp,'LH2crossAnti') || strcmp(sTtyp,'LH2crossHpos')
+    if strcmp(sTtyp,'singleLH') || strcmp(sTtyp,'LH2cross') || strcmp(sTtyp,'LH2crossAnti')...
+            || strcmp(sTtyp,'LH2crossHpos') || strcmp(sTtyp,'Mask')
         exp.nBlocks             = 96;                                                   % total number of blocks
         exp.nTrials_perBlock    = 100; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block), it has to be a number divisible bz 4
         exp.maxRT               = 2;
@@ -64,6 +65,9 @@ if restart_flag                                                             % cr
         exp.PC.gamma            = 0.5;
         if strcmp(sTtyp,'LH2crossHpos')
             exp.nTrials_perBlock    = 60; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
+        elseif strcmp(sTtyp,'Mask')
+            exp.nTrials_perBlock    = 140;
+            exp.SOA                 = [-.6,-.3,0,.3,.6];
         end
     elseif strcmp(sTtyp,'handEye')
         exp.nBlocks             = 96;                                                   % total number of blocks
@@ -208,6 +212,20 @@ if create_result == 1                                                       % cr
         
         result.trial_int                = []; 
         result.trial_actualIntensity    = [];
+    elseif strcmp(sTtyp,'Mask')
+        result.block_crossed            = repmat(randsample([1 0],2),...          % 0 - uncrossed ; 1 - crossed 
+                                                1,exp.nBlocks/2);
+        for exprep = 1:exp.nBlocks/12                                           % ugly but per every p(right) we get two repetitions of crossed and uncrossed conditions
+            auxpp = [repmat([.3,.5,.7],1,4);repmat([0 0 0 1 1 1],1,2)];                                    
+            for bperexp = 1:12
+                ei = randsample(find(auxpp(2,:)==result.block_crossed(12*exprep-12+bperexp)),1);
+                result.block_Pright(12*exprep-12+bperexp) = auxpp(1,ei) ;
+                auxpp(:,ei) = [];
+            end
+        end
+        result.trial_int                = []; 
+        result.trial_actualIntensity    = [];
+        result = rmfield(result,'trial_blockType');
     end
     save(sprintf('%s%ss%s_%s_results.mat',Spath,filesep,sNstr,sTtyp),'result','-append')
     next_block = 1;
