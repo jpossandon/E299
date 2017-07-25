@@ -36,7 +36,7 @@ contrastList  = list(ReLuHu_vs_ReLuHc = (Cnames=="ReLuHu")-(Cnames=="ReLuHc"),Re
                      RaLuHu_vs_RaLcHc = (Cnames=="RaLuHu")-(Cnames=="RaLcHc"),RaLuHc_vs_RaLcHu = (Cnames=="RaLuHc")-(Cnames=="RaLcHu"),
                      RaLuHc_vs_RaLcHc = (Cnames=="RaLuHc")-(Cnames=="RaLcHc"),RaLcHu_vs_RaLcHc = (Cnames=="RaLcHu")-(Cnames=="RaLcHc"),
                      ReLuHu_vs_RaLuHu = (Cnames=="ReLuHu")-(Cnames=="RaLuHu"),ReLuHc_vs_RaLuHc = (Cnames=="ReLuHc")-(Cnames=="RaLuHc"),
-                     ReLcHc_vs_RaLcHc = (Cnames=="ReLcHc")-(Cnames=="RaLcHc"),ReLcHu_vs_RaLcHu = (Cnames=="ReLcHc")-(Cnames=="RaLcHc"))
+                     ReLcHc_vs_RaLcHc = (Cnames=="ReLcHc")-(Cnames=="RaLcHc"),ReLcHu_vs_RaLcHu = (Cnames=="ReLcHu")-(Cnames=="RaLcHc"))
 
 subj_dataALLdiff    <- list()
 for ( cIdx in 1:length(contrastList) ){
@@ -64,6 +64,19 @@ contrastList = list(Ext = (gnames=="Ext"), Anat = (gnames=="Anat"),Ext_vs_Anat =
 
 cbbPalette  <- c("#606060","#606060","#606060","#606060","#606060","#606060","#606060","#606060","#606060")
 
-multiPlot(Sample,contrastList = contrastList,contPplot = c(3,3),cbbPalette = cbbPalette,xlims = c(-.14,.04,.05),
+multiPlot(Sample,contrastList = contrastList,contPplot = c(3,3),cbbPalette = cbbPalette,xlims = c(-.15,.10,.025),
           SData = F, diffplot = c(F,F,T,F,F,T,F,F,T), subj_dataALL)
 saveGraph(file=paste(getwd(),"/figures/LH2cross/bayes/",fileNameRoot,"_MainEffect",sep=""), type="pdf")
+
+# interaction
+contrastList = list(Ext_vs_Anat = (gnames=="Ext")-(gnames=="Anat"),UC_Legs_vs_C_Legs = (gnames=="UC_Legs")-(gnames=="C_Legs"),
+                    Ext_vs_Anat_x_UC_Legs_vs_C_Legs = (gnames=="Ext")-(gnames=="Anat")-(gnames=="UC_Legs")+(gnames=="C_Legs"),
+                    Ext_vs_Anat = (gnames=="Ext")-(gnames=="Anat"),UC_Hands_vs_C_Hands = (gnames=="UC_Hands")-(gnames=="C_Hands"),
+                    Ext_vs_Anat_x_UC_Hands_vs_C_Hands = (gnames=="Ext")-(gnames=="Anat")-(gnames=="UC_Hands")+(gnames=="C_Hands"),
+                    UC_Legs_vs_C_Legs = (gnames=="UC_Legs")-(gnames=="C_Legs"),UC_Hands_vs_C_Hands = (gnames=="UC_Hands")-(gnames=="C_Hands"),
+                    UC_Legs_vs_C_Legs_x_UC_Hands_vs_C_Hands = (gnames=="UC_Legs")-(gnames=="C_Legs")-(gnames=="UC_Hands")+(gnames=="C_Hands"))
+
+cbbPalette  <- c("#606060","#606060","#606060","#606060","#606060","#606060","#606060","#606060","#606060")
+
+multiPlot(Sample,contrastList = contrastList,contPplot = c(3,3),cbbPalette = cbbPalette,xlims = c(-.2,.2,.05),
+          SData = F, diffplot = c(F,F,T,F,F,T,F,F,T), subj_dataALL)

@@ -93,7 +93,7 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
                 label = ttl)+
       scale_y_continuous(limits=ylims,expand = c(0, 0))+
       geom_hline(yintercept = 0)+
-      scale_x_continuous(limits=xlms[1:2],expand = c(0, 0),breaks=seq(xlms[1],xlms[2],by=xlms[3]))
+      scale_x_continuous(limits=xlms[1:2],expand = c(0, 0),breaks=round(seq(xlms[1],xlms[2],by=xlms[3])*1000)/1000)
     
     if(SData){
       if (cIdx<=length(subj_dataALL)){
@@ -103,7 +103,7 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
         quamean  <- data.frame(x=mean(subj_data$value, na.rm = TRUE),y=c(.7*ylims[1],.9*ylims[1]),g='mean')
         
         p1 <- p1 + 
-          geom_point(data = subj_data,aes(x=value,y=.4*negLimY*maxContdens),shape=21,colour = "#2D2D2D",fill=hdifill, size = 2,stroke=.2,position = position_jitter(height = -.4*ylims[1]))+
+          geom_point(data = subj_data,aes(x=value,y=.4*negLimY*maxContdens),shape=21,colour = "#2D2D2D",fill=hdifill, size = 2,stroke=.2,position = position_jitter(height = -.4*ylims[1],width= 0))+
           geom_line(data=qua,aes(x,y),color=hdifill, size=.6)+
           geom_line(data=quamed,aes(x,y),color=hdifill, size=.6)+
           geom_line(data=quamean,aes(x,y),color="black", size=.6)
