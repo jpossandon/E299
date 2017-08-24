@@ -107,7 +107,7 @@ elseif strcmp(exp.sTtyp,'LH2cross')  || strcmp(exp.sTtyp,'LH2crossHpos') || strc
     exp.intensitites = [(log10(2)+QuestMean(q(1))) (log10(6)+QuestMean(q(1)));
                     (log10(2)+QuestMean(q(2))) (log10(6)+QuestMean(q(2)))];
 elseif strcmp(exp.sTtyp,'Mask')            % only one intensity 6dB from thresho;d
-    exp.intensitites = [(log10(2)+QuestMean(q(1))) ;
-                    (log10(2)+QuestMean(q(2)))];
+    exp.intensitites = [(log10(1)+QuestMean(q(1))) ;
+                    (log10(1)+QuestMean(q(2)))];
 end
 exp.psych_curve = 1;

@@ -39,7 +39,7 @@ while next_block
             E299_blockLH2
         elseif strcmp(exp.sTtyp,'LH2crossHpos')
             E299_blockLH2Hpos
-        elseif strcmp(exp.sTtyp,'Maks')
+        elseif strcmp(exp.sTtyp,'Mask')
             E299_blockMask
         end
     elseif strcmp(aux_inp,'s')

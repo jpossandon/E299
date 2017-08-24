@@ -22,7 +22,7 @@ result.trial_SOA(next_trial:next_trial+nTrials-1)           = auxtSOA(aunxrnd);
 for t= next_trial:next_trial+nTrials-1
     response    = 0; 
     side        = result.trial_limbside(t);                                 % 1 left 2 right (anatomical)
-    tSOA        = result.trial_soa(t);                                      % 1 -60ms ,2 -30ms ,3 0ms ,4 30ms ,5 60ms ,6 no mask, 7 no target
+    tSOA        = result.trial_SOA(t);                                      % 1 -60ms ,2 -30ms ,3 0ms ,4 30ms ,5 60ms ,6 no mask, 7 no target
     result.trial_actualIntensity(t) = 10.^((rand(1)-.5)/20+exp.intensitites(side,result.trial_int(t)));
 
     % change to variable intensity so participants cannot associate a
@@ -37,7 +37,7 @@ for t= next_trial:next_trial+nTrials-1
     WaitSecs(result.trial_randSOA(t));
     
     if tSOA == 1 || tSOA == 2
-        putvalue(DIO.line(1:3),dec2binvec(5,3));     % 
+        putvalue(DIO.line(1:3),dec2binvec(4,3));     % 
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:3),dec2binvec(0,3));
         WaitSecs(-exp.SOA(tSOA)-exp.sound.tactile_dur)
@@ -46,7 +46,7 @@ for t= next_trial:next_trial+nTrials-1
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:3),dec2binvec(0,3));     % stimulation channel is on during the complete trial
     elseif tSOA == 3
-        putvalue(DIO.line(1:3),dec2binvec(5+side,3));     %
+        putvalue(DIO.line(1:3),dec2binvec(4+side,3));     %
         lastStim      = GetSecs; 
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:3),dec2binvec(0,3));
@@ -56,7 +56,7 @@ for t= next_trial:next_trial+nTrials-1
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:3),dec2binvec(0,3));
         WaitSecs(exp.SOA(tSOA)-exp.sound.tactile_dur)
-        putvalue(DIO.line(1:3),dec2binvec(5,3));     % 
+        putvalue(DIO.line(1:3),dec2binvec(4,3));     % 
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:3),dec2binvec(0,3));
     elseif tSOA == 6   
@@ -65,7 +65,7 @@ for t= next_trial:next_trial+nTrials-1
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:3),dec2binvec(0,3));
     elseif tSOA == 7   
-        putvalue(DIO.line(1:3),dec2binvec(5,3));     %
+        putvalue(DIO.line(1:3),dec2binvec(4,3));     %
         lastStim      = GetSecs; 
         WaitSecs(exp.sound.tactile_dur);
         putvalue(DIO.line(1:3),dec2binvec(0,3));
@@ -91,7 +91,7 @@ for t= next_trial:next_trial+nTrials-1
     result.trial_response(t) = response;
     % 0 - incorrect, 1 - correct, 2 - false negative, 
     % 3 - False positive, 4 - true negative
-    if response==1 && tSOA == 7
+    if response>0 && tSOA == 7
         result.trial_correct(t) = 3;     % False Positive
         display(sprintf('False Positive\n'))
     elseif response==0 && tSOA == 7
@@ -100,9 +100,9 @@ for t= next_trial:next_trial+nTrials-1
         display(sprintf('True Negative\n'))
     elseif response==0 && tSOA<7         % False Negative
         result.trial_RT(t) = NaN;
-        result.trial_correct(t) = NaN;
+        result.trial_correct(t) = 2;
         display(sprintf('False Negative\n'))
-    elseif response==1 && tSOA<7
+    elseif response>0 && tSOA<7
       % ressult response coding
       % limbside (anatomical) 1 - left 2 - right
       % crossed_hand 0 - uncrossed 1 - crossed

@@ -67,7 +67,7 @@ if restart_flag                                                             % cr
             exp.nTrials_perBlock    = 60; % trials per block can be flexible adjusted so no all blocks have the same amount of trials (e.g. shorter test block)
         elseif strcmp(sTtyp,'Mask')
             exp.nTrials_perBlock    = 140;
-            exp.SOA                 = [-.6,-.3,0,.3,.6];
+            exp.SOA                 = [-.06,-.03,0,.03,.06];
         end
     elseif strcmp(sTtyp,'handEye')
         exp.nBlocks             = 96;                                                   % total number of blocks
@@ -216,11 +216,15 @@ if create_result == 1                                                       % cr
         result.block_crossed            = repmat(randsample([1 0],2),...          % 0 - uncrossed ; 1 - crossed 
                                                 1,exp.nBlocks/2);
         for exprep = 1:exp.nBlocks/12                                           % ugly but per every p(right) we get two repetitions of crossed and uncrossed conditions
-            auxpp = [repmat([.3,.5,.7],1,4);repmat([0 0 0 1 1 1],1,2)];                                    
+            auxpp = [repmat([.3,.5,.7],1,4);repmat([0 0 0 1 1 1],1,2)]                                    
             for bperexp = 1:12
-                ei = randsample(find(auxpp(2,:)==result.block_crossed(12*exprep-12+bperexp)),1);
+                if bperexp<11
+                    ei = randsample(find(auxpp(2,:)==result.block_crossed(12*exprep-12+bperexp)),1);
+                else
+                    ei = find(auxpp(2,:)==result.block_crossed(12*exprep-12+bperexp));
+                end
                 result.block_Pright(12*exprep-12+bperexp) = auxpp(1,ei) ;
-                auxpp(:,ei) = [];
+                auxpp(:,ei) = []
             end
         end
         result.trial_int                = []; 
