@@ -2,7 +2,7 @@
 % clear
 % datapath    = '/Users/jossando/trabajo/E299/';
 % subj        = 3;
-task        = 'LH2cross';
+%task        = 'LH2cross';
 % filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
 %                         filesep,subj,task,filesep,subj,task);      % for pilot data
 % %filename    = sprintf('%sdata%s%s%ss%d_%s%ss%d_%s_results',datapath,filesep,task,...
@@ -65,7 +65,9 @@ legend(h,leglab);
 xlabel('Reaction Time (s)')
 ylabel('Frequency')
 box off
-figname = sprintf('%s%ss%d_LH2cross_hist',pathFigures,filesep,subj);
+
+figname = sprintf('%s%ss%d_%s_hist',pathFigures,filesep,subj,task);
+
 print(gcf,'-dpng',figname)
 close gcf
 %%
@@ -99,7 +101,7 @@ ylabel('RT (mean+SD)','FontSize',14)
 vline(2.5:2:15.5,':k')
 tightfig
 
-figname = sprintf('%s%ss%d_LH2cross_means',pathFigures,filesep,subj);
+figname = sprintf('%s%ss%d_%s_means',pathFigures,filesep,subj,task);
 print(gcf,'-dpng',figname)
 close(gcf)
 %%
@@ -130,7 +132,7 @@ xlabel('Intensity','FontSize',14)
 ylabel('% incorrect/misses','FontSize',14)
 vline(2.5:2:15.5,':k')
 tightfig
-figname = sprintf('%s%ss%d_LH2cross_perf',pathFigures,filesep,subj); 
+figname = sprintf('%s%ss%d_%s_perf',pathFigures,filesep,subj,task); 
 print(gcf,'-dpng',figname)
 close(gcf)
 
@@ -173,7 +175,7 @@ xlabel('Response mode','FontSize',18)
 ylabel('RT (mean+SD)','FontSize',18)
 % vline(2.5:2:15.5,':k')
 % tightfig
-figname = sprintf('%s%ss%d_LH2cross_meansNoInt',pathFigures,filesep,subj); 
+figname = sprintf('%s%ss%d_%s_meansNoInt',pathFigures,filesep,subj,task); 
 print(gcf,'-dpng',figname)
 close(gcf)
 clear stat_avgdB stat h perf hh

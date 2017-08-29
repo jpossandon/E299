@@ -6,13 +6,19 @@
 clear
 forceNew        = 0;                        % to creates everything anew
 forceaddSubject = 0;                        % replace data of addSubject in alldata 
-addSubject      = [22];                  % subjects to process
+expN            = 1;                        % first or second iteration (with anti task) of the experimen
+addSubject      = [];                  % subjects to process
 exppath         = '/Users/jossando/trabajo/E299/';
 datapath        = fullfile(exppath,'data','LH2cross');
-alldataMatFile  = fullfile(datapath,'allSubject.mat');
-alldataCSVFile  = fullfile(datapath,'allSubject.csv');
-pathFigures     = fullfile(exppath,'figures','LH2cross');
-
+if expN==1
+    alldataMatFile  = fullfile(datapath,'allSubject.mat');
+    alldataCSVFile  = fullfile(datapath,'allSubject.csv');
+    pathFigures     = fullfile(exppath,'figures','LH2cross');
+elseif expN==2
+    alldataMatFile  = fullfile(datapath,'allSubjectExp2.mat');
+    alldataCSVFile  = fullfile(datapath,'allSubjectExp2.csv');
+    pathFigures     = fullfile(exppath,'figures','LH2crossExp2');
+end
 if forceNew
     allData     = struct('subjIndx',[],'trial_RT',[],'trial_blockType',[],'trial_response',[],...
                 'trial_limbside',[],'trial_randSOA',[],'trial_correct',[],...
@@ -25,6 +31,7 @@ end
 for subj = addSubject
     subjResultFile          = [datapath filesep 's' num2str(subj) '_LH2cross' filesep 's' num2str(subj) '_LH2cross_results'];
     load(subjResultFile)
+    task                    = 'LH2cross';
     E299_simplePlotsLH2cross
     redux_result            = rmfield(result,{'block_done','t_perBlock','block_session',...
                             'created','block_crossed_legs','block_crossed_hands','blockType'});

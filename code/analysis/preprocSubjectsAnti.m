@@ -6,7 +6,8 @@
 clear
 forceNew        = 1;                        % to creates everything anew
 forceaddSubject = 0;                        % replace data of addSubject in alldata 
-addSubject      = [51];                  % subjects to process
+addSubject      = [32];                  % subjects to process
+expN            = 2;
 exppath         = '/Users/jossando/trabajo/E299/';
 datapath        = fullfile(exppath,'data','LH2crossAnti');
 alldataMatFile  = fullfile(datapath,'allSubject.mat');
@@ -25,6 +26,7 @@ end
 for subj = addSubject
     subjResultFile          = [datapath filesep 's' num2str(subj) '_LH2crossAnti' filesep 's' num2str(subj) '_LH2crossAnti_results'];
     load(subjResultFile)
+    task                    = 'LH2crossAnti';
     E299_simplePlotsLH2cross
     redux_result            = rmfield(result,{'block_done','t_perBlock','block_session',...
                             'created','block_crossed_legs','block_crossed_hands','blockType'});
