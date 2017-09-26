@@ -29,17 +29,31 @@ require(ggplot2)
 require(plyr)
 require(yarrr)
 library(extrafont)
+require(plotrix)
+require(gridExtra)
 
 perf          = FALSE
 logn          = FALSE                            # log-normal data model
 avgs          = FALSE
 factorial     = TRUE
+exp           = 1
+task          = "normal"
 
-rem_subjects = c(3,9,13)                         # reasons to remove: subject 3 the button did not work well, subject 9 stimulator stop working for the last four block, s13 stimulator broke down and subject did not feel stimulation for long periods
+if(exp==1){
+  rem_subjects = c(3,9,13)
+  pathfig = "LH2cross"}
+if(exp==2){
+  rem_subjects = c()
+  if(task=="normal"){
+    pathfig = "LH2crossExp2"}
+  if(task=="anti"){
+    pathfig = "LH2crossAnti"}
+}                         # reasons to remove: subject 3 the button did not work well, subject 9 stimulator stop working for the last four block, s13 stimulator broke down and subject did not feel stimulation for long periods
 if(avgs){Tstr='subjMeans'}
 if(!avgs){Tstr='allData'}
 if(factorial){fstr='factorial'}
 if(!factorial){fstr='simpleEffect'}
+
 #if(logn){Tstr='logNorm'}
 #if(!logn){Tstr='Norm'}
 

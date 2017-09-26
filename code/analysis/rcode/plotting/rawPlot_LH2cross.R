@@ -47,7 +47,7 @@ dat2$paircond <-c(1,2,3,4,1,2,3,4)
 for (ss in c(1,2,3,4)){
   p1$layers <- c(geom_line(data=subset(dat2, paircond %in% ss),aes(x=numcond, y=meanRT, group=paircond),colour=cbbPalette[ss],size=.5),p1$layers)
   p1 <- p1 + 
-     geom_text(data=NULL,aes(x = 6.5+gap), y = 1-ss/20,label = crossLabels[ss],hjust=0,
+     geom_text(data=NULL,aes(x = 6.5+gap), y = 1.2-ss/20,label = crossLabels[ss],hjust=0,
               size=5,color=cbbPalette[ss])
 }
 # line between subject data in the same response mode
@@ -60,14 +60,14 @@ p1$layers <- c(geom_line(data=auxdat1,aes(x=numcond+rep(jitterVal,each=4), y=mea
 
 
 p1 <- p1 + 
-  scale_y_continuous(limits=c(0,1),expand = c(0, 0)) +
+  scale_y_continuous(limits=c(0,1.2),expand = c(0, 0)) +
   scale_x_continuous(limits=xlims,expand = c(0, 0),
                      breaks=c(2.5,6.5+gap),labels=c('External','Anatomical'))+
   ylab('Reaction Time (Mean +- SEM)')+
   ggtitle(sprintf('N = %d',length(unique(datFrame$subjIndx))))
   
 print(p1)
-saveGraph(file=paste(getwd(),"/figures/LH2cross/allSubjectsMeans",sep=""), type="pdf")
+saveGraph(file=paste(getwd(),"/figures/",pathfig,"/allSubjectsMeans",sep=""), type="pdf")
 
 # by truial order
 #datext    = ddply(datFrame[datFrame$cond %in% c("ReLuHu","ReLuHc","ReLcHu","ReLcHc"),]
@@ -108,14 +108,14 @@ p1 <- p1 +
 if (dT==2){
   for (ss in c(1,2,3,4)){
      p1 <- p1 + 
-      geom_text(data=NULL,aes(x = 50), y = .9-ss/25,label = crossLabels[ss],hjust=0,
+      geom_text(data=NULL,aes(x = 50), y = 1.2-ss/20,label = crossLabels[ss],hjust=0,
               size=5,color=cbbPalette[ss])
   }
 }
 p1 <- p1 + 
   scale_fill_manual(values=cbbPalette)+
   scale_color_manual(values=cbbPalette)+
-  scale_y_continuous("RT+-SEM",limits=c(.3,.9),expand = c(0, 0)) +
+  scale_y_continuous("RT+-SEM",limits=c(0,1.2),expand = c(0, 0)) +
  scale_x_continuous(labelsResp[dT],limits=c(0,100),expand = c(0, .75)) +
   ggtitle(sprintf('N = %d',length(unique(datFrame$subjIndx))))
 pltList[[dT]] <- p1
@@ -124,4 +124,4 @@ pltList[[dT]] <- p1
 openGraph(width = 8, height = 4) 
 
 do.call(grid.arrange, c(pltList, nrow=1, ncol=2, as.table = FALSE)) 
-saveGraph(file=paste(getwd(),"/figures/LH2cross/allSubjectsbytrial",sep=""), type="pdf")
+saveGraph(file=paste(getwd(),"/figures/",pathfig,"/allSubjectsbytrial",sep=""), type="pdf")

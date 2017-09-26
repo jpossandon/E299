@@ -63,5 +63,5 @@ p1 <- p1 +
   ggtitle(sprintf('N = %d',length(unique(datFrameOK$subjIndx))))
   
 print(p1)
-saveGraph(file=paste(getwd(),"/figures/LH2cross/allSubjectsperf",sep=""), type="pdf")
+saveGraph(file=paste(getwd(),"/figures/",pathfig,"/allSubjectsperf",sep=""), type="pdf")
 

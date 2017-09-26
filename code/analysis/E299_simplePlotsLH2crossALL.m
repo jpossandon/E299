@@ -2,6 +2,7 @@
 %%
 % data
 stat_avgdB = []
+s = 1;
 for subj = unique(allData.subjIndx)
     nndB = 1;
     for b = 1:2
@@ -12,11 +13,12 @@ for subj = unique(allData.subjIndx)
                     & allData.trial_crossed_legs==cL ...
                     & allData.trial_crossed_hand==cH ...
                     & allData.subjIndx==subj);
-                    stat_avgdB(nndB,:,subj) = [median(data) mean(data) std(data)];
+                    stat_avgdB(nndB,:,s) = [median(data) mean(data) std(data)];
                     nndB = nndB+1;
             end
         end
     end
+    s = s+1
 end
 
 %%
@@ -50,6 +52,7 @@ legend(hhh,{' || legs  || hands',' || legs  X hands',' X legs  || hands',' X leg
 xlabel('Response mode','FontSize',18)
 ylabel('RT (mean+SEM)','FontSize',18)
 tightfig
+%%
 figname = sprintf('%s%sallSubjects_%s_meansNoInt',pathFigures,filesep,task); 
 print(gcf,'-dpng',figname)
 close(gcf)

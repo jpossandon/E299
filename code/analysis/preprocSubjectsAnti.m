@@ -4,14 +4,14 @@
 % corresponding csv file
 % creates single and all subjects figures
 clear
-forceNew        = 1;                        % to creates everything anew
+forceNew        = 0;                        % to creates everything anew
 forceaddSubject = 0;                        % replace data of addSubject in alldata 
-addSubject      = [32];                  % subjects to process
+addSubject      = [44];                  % subjects to process
 expN            = 2;
 exppath         = '/Users/jossando/trabajo/E299/';
 datapath        = fullfile(exppath,'data','LH2crossAnti');
-alldataMatFile  = fullfile(datapath,'allSubject.mat');
-alldataCSVFile  = fullfile(datapath,'allSubject.csv');
+alldataMatFile  = fullfile(datapath,'allSubjectExp2Anti.mat');
+alldataCSVFile  = fullfile(datapath,'allSubjectExp2Anti.csv');
 pathFigures     = fullfile(exppath,'figures','LH2crossAnti');
 
 if forceNew

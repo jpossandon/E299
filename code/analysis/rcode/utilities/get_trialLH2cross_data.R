@@ -1,5 +1,8 @@
 
-datFrame          <- read.csv(file="data/LH2cross/allSubject.csv" , sep="," , strip.white=T)
+if(exp==1){datFrame          <- read.csv(file="data/LH2cross/allSubject.csv" , sep="," , strip.white=T)}
+if(exp==2 & task=="normal"){datFrame          <- read.csv(file="data/LH2cross/allSubjectExp2.csv" , sep="," , strip.white=T)}
+if(exp==2 & task=="anti"){datFrame          <- read.csv(file="data/LH2crossAnti/allSubjectExp2Anti.csv" , sep="," , strip.white=T)}
+
 datFrame          <- subset(datFrame, select = -c(X))
 bt                <- datFrame$trial_blockType
 bt                <- gsub('1','Re',bt)
