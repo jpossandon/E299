@@ -44,7 +44,7 @@ while contPsych
         end
         
         PsychPortAudio('FillBuffer', pahandle, wave.tact.*10.^tIntensity);             % this takes less than 1 ms
-        display(sprintf('Stimulus %d Side %d Intensity %1.3f',t,side(t),10.^tIntensity))
+        display(sprintf('Stimulus %d Side %d Intensity %1.4f',t,side(t),10.^tIntensity))
     
         PsychPortAudio('Start', pahandle, 0,0,0);    % repeats infitnely, starts as soon as posible, and continues with code inmediatly (we are contrling the stimulation with the parallel port so it does not matter)
         WaitSecs(randSOA(t));
@@ -81,13 +81,13 @@ while contPsych
         response = 0;
     end
     save(sprintf('%s%ss%s_psychCurve%s.mat',exp.Spath,filesep,exp.sNstr,datestr(now,'ddmmyy')),'q');
-    display(sprintf('\nLeft Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(1)),10.^(QuestMean(q(1))+QuestSd(q(1)))-10.^QuestMean(q(1))))
-    display(sprintf('\nRight Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(2)),10.^(QuestMean(q(2))+QuestSd(q(2)))-10.^QuestMean(q(2))))
+    display(sprintf('\nLeft Intensity threshold (mean): %1.4f\nIntensity sd: %1.4f',10.^QuestMean(q(1)),10.^(QuestMean(q(1))+QuestSd(q(1)))-10.^QuestMean(q(1))))
+    display(sprintf('\nRight Intensity threshold (mean): %1.4f\nIntensity sd: %1.4f',10.^QuestMean(q(2)),10.^(QuestMean(q(2))+QuestSd(q(2)))-10.^QuestMean(q(2))))
 end
 
 %%
- display(sprintf('\nLeft Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(1)),10.^(QuestMean(q(1))+QuestSd(q(1)))-10.^QuestMean(q(1))))
-    display(sprintf('\nRight Intensity threshold (mean): %1.3f\nIntensity sd: %1.3f',10.^QuestMean(q(2)),10.^(QuestMean(q(2))+QuestSd(q(2)))-10.^QuestMean(q(2))))
+ display(sprintf('\nLeft Intensity threshold (mean): %1.4f\nIntensity sd: %1.4f',10.^QuestMean(q(1)),10.^(QuestMean(q(1))+QuestSd(q(1)))-10.^QuestMean(q(1))))
+    display(sprintf('\nRight Intensity threshold (mean): %1.4f\nIntensity sd: %1.4f',10.^QuestMean(q(2)),10.^(QuestMean(q(2))+QuestSd(q(2)))-10.^QuestMean(q(2))))
 E299_PsychCurve
 %%
 % intensities are threshold, and 3 and 6 dB of amplitude ratio (equal to
