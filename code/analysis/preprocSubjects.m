@@ -7,7 +7,7 @@ clear
 forceNew        = 0;                        % to creates everything anew
 forceaddSubject = 0;                        % replace data of addSubject in alldata 
 expN            = 2;                        % first or second iteration (with anti task) of the experimen
-addSubject      = [44];                  % subjects to process
+addSubject      = [55,59,60,61,62,63];                  % subjects to process
 exppath         = '/Users/jossando/trabajo/E299/';
 datapath        = fullfile(exppath,'data','LH2cross');
 if expN==1

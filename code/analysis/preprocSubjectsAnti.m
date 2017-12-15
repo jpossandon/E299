@@ -6,7 +6,7 @@
 clear
 forceNew        = 0;                        % to creates everything anew
 forceaddSubject = 0;                        % replace data of addSubject in alldata 
-addSubject      = [44];                  % subjects to process
+addSubject      = [55,59,60,61,62,63];                  % subjects to process
 expN            = 2;
 exppath         = '/Users/jossando/trabajo/E299/';
 datapath        = fullfile(exppath,'data','LH2crossAnti');

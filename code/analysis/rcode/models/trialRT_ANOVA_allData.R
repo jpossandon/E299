@@ -121,7 +121,7 @@ for (j1 in 1:2){
   for (j2 in 1:2){
  for (j3 in 1:2){
 for (js in 1:NSubj){
-a1a2a3aS[j1,j2,j3,js] ~ dnorm( 0.0 , 1/a1a2aSSD^2 )
+a1a2a3aS[j1,j2,j3,js] ~ dnorm( 0.0 , 1/a1a2a3aSSD^2 )
 }
 }
   }
