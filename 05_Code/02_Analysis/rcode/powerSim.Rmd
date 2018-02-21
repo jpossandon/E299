@@ -1,0 +1,111 @@
+---
+title: "Power Simulation"
+author: "Jose Ossandon"
+date: "2/12/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(plyr)
+library("RColorBrewer")
+require(ggplot2)
+
+load("/Users/jossando/trabajo/E299/07_Analyses/powerSim/02122018powerSim.R")
+```
+## Paired comparisons
+
+To evaluate how many subjects and trials per  would be necessary to have a powered experiment replication, I first evaluated the experiment's paired-comparisons between the main conditions. These correspond to the crossing of the factors response mode (2 leves, external 'Re' and anatomical), crossing of the legs (2 levels, uncrossed 'Lu' and crossed 'Lc') and crossing of the hands (2 levels, uncrossed 'Hu' and crossed 'Hc').
+
+**p-values**
+```{r pvalues, echo=FALSE}
+auxdat   =  datFrame[datFrame$areOK,]
+auxres   = ddply(auxdat,.(subjIndx,cond),summarize,RT=mean(trial_RT,na.rm=T))
+Actualp  = pairwise.t.test(x=auxres$RT,g=auxres$cond,paired=TRUE)
+Actualh  = Actualp$p.value<.05
+print(Actualp)
+```
+
+**Significant comparison (alpha<.05 corrected)**
+```{r H, echo=FALSE}
+Actualh  = Actualp$p.value<.05
+print(Actualh)
+```
+
+As it can be seen from this result, most of the comparisons between conditions are signficant and with very low p-values, reflecting the fact that they were large and strongly consistent across subjects.
+\pagebreak
+
+## Simulations
+Each experiment simulation was performed by taking a random sample of subjects (total # of subjects: `r length(unique(datFrame$subjIndx))`) and trials per condition (total # of trials per condition: 300). For every combination of #subjects and #trials *`r nSims`* repetitions were done. The result of each simulation' significant-comparison table was compared to the actual result of the experiment (the table above).
+
+For the following plot, a simulation was considered a 'successful' experiment replication when the comparison-tables were exactly equal (i.e., the result of being significant or not of the 28 possible paired-comparisons was exactly the same between the actual results and the result in the simulated experiment). The 'power' value indicates the % of the *`r nSims`* simulations that showed exactly the same result.   
+
+```{r pressure, echo=FALSE}
+pequal = setNames(as.data.frame(as.table(rowSums(1*resultequal,dims=2)/nSims*100)),c("nSubjects","nTrials","Power"))
+peins = setNames(as.data.frame(as.table(rowSums(1*resultein,dims=2)/nSims*100)),c("nSubjects","nTrials","Power"))
+pzwei = setNames(as.data.frame(as.table(rowSums(1*resultzwei,dims=2)/nSims*100)),c("nSubjects","nTrials","Power"))
+pdrei = setNames(as.data.frame(as.table(rowSums(1*resultdrei,dims=2)/nSims*100)),c("nSubjects","nTrials","Power"))
+getPalette = colorRampPalette(brewer.pal(name="Reds",n=9))
+```
+
+
+**Simulations exactly equal**
+
+```{r fig1, fig.height = 4, fig.width = 5, echo=FALSE}
+
+ggplot(data =pequal)+
+geom_raster(aes(x=nSubjects,y=nTrials,fill=Power))+
+  geom_text(aes(x=nSubjects,y=nTrials,label=sprintf("%2.0f",Power)),color="black",size=2)+
+#scale_fill_brewer(type="seq",palette ="Blues")+
+   #scale_fill_continuous(low="black", high="pink", limits=c(.5,1))+
+scale_fill_gradientn(colours=getPalette(100))+
+scale_x_discrete(expand=c(0,0))+
+  scale_y_discrete(expand=c(0,0))
+```
+
+Considering a replication successful only when all the comparisons have the same result might be too strict, specially when considering the number of comparisons (28), that most comparisons were significant in the original experiment (23/28) but two of them had p-values that were only between 0.01 and 0.05 (adjusted). Furthermore these two barely significant comparisons represent differences that are numerically small (20-40 ms) when compared to the other mayor effects we see. Therefore the following three plots show the simulated power when considered a replication succesful when there is only one, two, or three comparisons that are different. 
+
+\pagebreak
+
+**Different result in only one comparison**
+
+```{r fig2, fig.height = 4, fig.width = 5, echo=FALSE}
+ggplot(data =peins)+
+geom_raster(aes(x=nSubjects,y=nTrials,fill=Power))+
+  geom_text(aes(x=nSubjects,y=nTrials,label=sprintf("%2.0f",Power)),color="black",size=2)+
+#scale_fill_brewer(type="seq",palette ="Blues")+
+   #scale_fill_continuous(low="black", high="pink", limits=c(.5,1))+
+scale_fill_gradientn(colours=getPalette(100))+
+scale_x_discrete(expand=c(0,0))+
+  scale_y_discrete(expand=c(0,0))
+```
+
+**Different result in two comparisons**
+
+```{r fig3, fig.height = 4, fig.width = 5, echo=FALSE}
+
+  
+ggplot(data =pzwei)+
+geom_raster(aes(x=nSubjects,y=nTrials,fill=Power))+
+  geom_text(aes(x=nSubjects,y=nTrials,label=sprintf("%2.0f",Power)),color="black",size=2)+
+#scale_fill_brewer(type="seq",palette ="Blues")+
+   #scale_fill_continuous(low="black", high="pink", limits=c(.5,1))+
+scale_fill_gradientn(colours=getPalette(100))+
+scale_x_discrete(expand=c(0,0))+
+  scale_y_discrete(expand=c(0,0))
+```
+
+**Different result in three comparisons**
+
+```{r fig4, fig.height = 4, fig.width = 5, echo=FALSE}
+ggplot(data =pdrei)+
+geom_raster(aes(x=nSubjects,y=nTrials,fill=Power))+
+  geom_text(aes(x=nSubjects,y=nTrials,label=sprintf("%2.0f",Power)),color="black",size=2)+
+#scale_fill_brewer(type="seq",palette ="Blues")+
+   #scale_fill_continuous(low="black", high="pink", limits=c(.5,1))+
+scale_fill_gradientn(colours=getPalette(100))+
+scale_x_discrete(expand=c(0,0))+
+  scale_y_discrete(expand=c(0,0))
+```
+
+

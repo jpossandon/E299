@@ -1,0 +1,115 @@
+---
+title: "lme_result"
+author: "Jose Ossandon"
+date: "14 December 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Result LM and ANOVA E299
+
+
+```{r getting_data, results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+path       = "/Users/jossando/trabajo/E299"
+setwd(path)
+
+source("code/analysis/rcode/utilities/openGraphSaveGraph.R", chdir=T) # utilities by Kruschke from http://doingbayesiandataanalysis.blogspot.de/
+source("code/analysis/rcode/utilities/HDIofMCMC.R", chdir=T)
+source("code/analysis/rcode/utilities/DBDA2E-utilities.R", chdir=T)
+require(runjags)
+require(ggplot2)
+require(plyr)
+require(yarrr)
+library(extrafont)
+require(plotrix)
+require(gridExtra)
+require(lme4)
+require(nlme)
+require(MuMIn)
+perf          = FALSE
+logn          = FALSE                            # log-normal data model
+avgs          = FALSE
+factorial     = TRUE
+
+model         = "Lc_Hc_cLxL" # cond
+
+
+rem_subjects = c()
+pathfig  = c("LH2crossExp2","LH2crossAnti")
+
+if(avgs){Tstr='subjMeans'}
+if(!avgs){Tstr='allData'}
+if(factorial){fstr='factorial'}
+if(!factorial){fstr='simpleEffect'}
+
+#if(logn){Tstr='logNorm'}
+#if(!logn){Tstr='Norm'}
+
+if(perf){fileNameRoot = paste("bern_ANOVA",Tstr,model,fstr,sep="_")}
+if(!perf){fileNameRoot = paste("trialRT_ANOVA",Tstr,model,fstr,sep="_")} # for constructing output filenames
+
+if(perf){if(!avgs&factorial){model = "bern_ANOVA_allData.R"}
+}
+if(!perf){
+  if(!avgs&factorial&model=="cond"){modelSource = "trialRT_ANOVA_Exp2_allData.R"}
+  if(!avgs&factorial&model=="Lc_Hc_cLxL"){modelSource = "trialRT_lm_Lc_Hc_cLxL_allData.R"}
+  if(avgs&factorial&model=="SR"){modelSource = "trialRT_ANOVA_SR_subjMeans.R"}
+  if(!avgs&factorial&model=="SR"){modelSource = "trialRT_ANOVA_SR_allData.R"}
+  if(!avgs&factorial&model=="SRcond"){modelSource = "trialRT_ANOVA_SRcond_allData.R"}      # model with SR condition plus task and response mode
+  if(!avgs&factorial&model=="SRred"){modelSource = "trialRT_ANOVA_SRred_allData.R"}
+  if(!avgs&factorial&model=="SRchain"){modelSource = "trialRT_ANOVA_SRchain_allData.R"}
+  if(model=="test"){modelSource = "trialRT_test.R"}
+  #if(!avgs&!factorial){model = "trialRT_ANOVA_allData_simpleEffect.R"}
+}
+
+source("code/analysis/rcode/utilities/get_exp2_data.R")
+datFrameOK$RespMF    = as.factor(datFrameOK$RespM) 
+datFrameOK$HandCF    = as.factor(datFrameOK$HandC) 
+datFrameOK$LegCF     = as.factor(datFrameOK$LegC) 
+datFrameOK$taskF     = as.factor(datFrameOK$task) 
+datFrameOK$cLxLF      = as.factor(datFrameOK$cLxL) 
+datFrameOK$subjIndxF = as.factor(datFrameOK$subjIndx)
+
+contrasts(datFrameOK$RespMF) <- contr.sum(2)
+contrasts(datFrameOK$HandCF) <- contr.sum(2)
+contrasts(datFrameOK$LegCF) <- contr.sum(2)
+contrasts(datFrameOK$taskF) <- contr.sum(2)
+contrasts(datFrameOK$cLxLF) <- contr.sum(2)
+contrasts(datFrameOK$subjIndxF) <- contr.sum(length(levels(datFrameOK$subjIndxF)))
+datFrameOK$trial_RTms = datFrameOK$trial_RT*1000 
+```
+Subjects' averages analysis
+```{r lmerresutls, echo=T}
+datFrameAvg = ddply(datFrameOK,.(subjIndxF,LegCF,HandCF,cLxLF),summarize,trial_RTms=mean(trial_RTms))
+mixmodel1 = lmer(trial_RTms ~ LegCF*HandCF*cLxLF + (1|subjIndxF), data=datFrameAvg, REML=F)
+summary(mixmodel1)
+anova(mixmodel1)
+```
+this are equivalent
+```{r lmeaovresults, echo=T}
+mixmodel1 = lme(trial_RTms ~ LegCF*HandCF*cLxLF , random= ~1|subjIndxF, data=datFrameAvg)
+summary(mixmodel1)
+anova(mixmodel1)
+anovamodel1 = aov(trial_RTms ~ LegCF*HandCF*cLxLF + Error(subjIndxF) , data=datFrameAvg)
+summary(anovamodel1)
+```
+adding the factor response mode (external or anatomical) explains a bit more
+```{r respm, echo=T}
+datFrameAvg = ddply(datFrameOK,.(subjIndxF,LegCF,HandCF,cLxLF,RespMF),summarize,trial_RTms=mean(trial_RTms))
+
+anovamodel1 = aov(trial_RTms ~ LegCF*HandCF*cLxLF + Error(subjIndxF) , data=datFrameAvg)
+summary(anovamodel1)
+anovamodel2 = aov(trial_RTms ~ LegCF*HandCF*cLxLF*RespMF + Error(subjIndxF) , data=datFrameAvg)
+summary(anovamodel2)
+
+
+noRespM = lmer(trial_RTms ~ LegCF*HandCF*cLxLF + (1|subjIndxF), data=datFrameAvg,REML=F)
+summary(noRespM)
+wRespM = lmer(trial_RTms ~ LegCF*HandCF*cLxLF*RespMF + (1|subjIndxF), data=datFrameAvg,REML=F)
+summary(wRespM)
+anova(noRespM,wRespM)
+
+```
