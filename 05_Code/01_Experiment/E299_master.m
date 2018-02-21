@@ -9,7 +9,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 splitStr                = regexp(fileparts(which('E299_master')),...        % this tells us the path to the experiment in any computer
-                            ['code'],'split');          
+                            ['05_Code'],'split');          
 Ppath                   = splitStr{1}; clear splitStr
 
 [exp,result,next_block] = E299_initialize_subject(Ppath);                   % initialize ore recovers subject folder, settings and result structure
@@ -35,7 +35,7 @@ while next_block
             E299_block
         elseif strcmp(exp.sTtyp,'handEye')
             E299_blockHE
-        elseif strcmp(exp.sTtyp,'LH2cross') || strcmp(exp.sTtyp,'LH2crossAnti')
+        elseif strcmp(exp.sTtyp,'LH2cross') || strcmp(exp.sTtyp,'LH2crossAnti')  ||  strcmp(exp.sTtyp,'LH3cross') || strcmp(exp.sTtyp,'HL3cross')
             E299_blockLH2
         elseif strcmp(exp.sTtyp,'LH2crossHpos')
             E299_blockLH2Hpos
