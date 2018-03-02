@@ -36,7 +36,7 @@ while contPsych
     for t= 1:nTrials
          % we define next trial intensity according to Quest or from a
         % uniform distribution between -2sd and +2sd the threshold value
-        if rand(1)<.8
+        if rand(1)<.9
             tIntensity  = QuestQuantile(q(side(t)));
         else
 %             tIntensity  = 10.^(QuestMode(q)) + (10.^(QuestMode(q)+3.*QuestSd(q))-10.^(QuestMode(q))).*(2*rand(1)-1);
@@ -54,7 +54,7 @@ while contPsych
         putvalue(DIO.line(1:8),dec2binvec(0,8));     % stimulation channel is on during the complete trial
         PsychPortAudio('Stop', pahandle);
      
-        while GetSecs-lastStim<1
+        while GetSecs-lastStim<1.5
             outVal = getvalue(DIO.Line(9:10));
             if sum(outVal(1:2))
                 q(side(t)).rt = [q(side(t)).rt,GetSecs-lastStim];
