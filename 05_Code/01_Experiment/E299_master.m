@@ -53,6 +53,7 @@ end
 
 
 %%
+
 PsychPortAudio('Close');
 disp(sprintf('\nend of experiment'))
 
