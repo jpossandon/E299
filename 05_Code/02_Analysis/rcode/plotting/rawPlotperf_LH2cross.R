@@ -63,5 +63,5 @@ p1 <- p1 +
   ggtitle(sprintf('N = %d',length(unique(datFrameOK$subjIndx))))
   
 print(p1)
-saveGraph(file=paste(getwd(),"/figures/",pathfig,"/allSubjectsperf",sep=""), type="pdf")
-
+saveGraph(file=paste(path,"/07_Analyses/",pathfig,"/allSubjectsperf",sep=""), type="pdf")
+#saveGraph(file=paste(path,"/07_Analyses/",pathfig[t],"/allSubPerfInt",tsks[t],prf[c+1],model,sep=""), type="pdf")

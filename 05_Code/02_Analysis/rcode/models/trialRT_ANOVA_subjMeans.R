@@ -1,13 +1,13 @@
 modelstring = "
 model {
 for ( i in 1:Ndata ) {
-y[i] ~ dt( mu[i] ,1/(ySigma[LegC[i],HandC[i],task[i]])^2, nu)
-mu[i] <- a0 + a1[LegC[i]] + a2[HandC[i]] + a3[task[i]] +  aS[S[i]] +        # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
-a1a2[LegC[i],HandC[i]] + a1a3[LegC[i],task[i]] + a2a3[HandC[i],task[i]] + 
-a1a2a3[LegC[i],HandC[i],task[i]] +
-a1aS[LegC[i],S[i]] + a2aS[HandC[i],S[i]] + a3aS[task[i],S[i]] +         # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
-a1a2aS[LegC[i],HandC[i],S[i]] + a1a3aS[LegC[i],task[i],S[i]] + a2a3aS[HandC[i],task[i],S[i]] + 
-a1a2a3aS[LegC[i],HandC[i],task[i],S[i]] 
+y[i] ~ dt( mu[i] ,1/(ySigma[RespM[i],LegC[i],HandC[i]])^2, nu)
+mu[i] <- a0 + a1[RespM[i]] + a2[LegC[i]] + a3[HandC[i]]  +  aS[S[i]] +        # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
+a1a2[RespM[i],LegC[i]] + a1a3[RespM[i],HandC[i]] + a2a3[LegC[i],HandC[i]] + 
+a1a2a3[RespM[i],LegC[i],HandC[i]] +
+a1aS[RespM[i],S[i]] + a2aS[LegC[i],S[i]] + a3aS[HandC[i],S[i]] +         # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
+a1a2aS[RespM[i],LegC[i],S[i]] + a1a3aS[RespM[i],HandC[i],S[i]] + a2a3aS[LegC[i],HandC[i],S[i]] + 
+a1a2a3aS[RespM[i],LegC[i],HandC[i],S[i]] 
 }
 #
 nu <- nuMinusOne+1
@@ -128,28 +128,39 @@ a1a2a3aS[j1,j2,j3,js] ~ dnorm( 0.0 , 1/a1a2aSSD^2 )
 a1a2a3aSSD ~ dgamma(aGammaShRa[1],aGammaShRa[2]) # or try a folded t (Cauchy)
 
 # Convert a0,a1[],a2[],a1a2[,] to sum-to-zero b0,b1[],b2[],b1b2[,] :
-for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j3 in 1:2 ) {
-m[j1,j2,j3] <- a0 + a1[j1] + a2[j2] + a3[j2] + a1a2[j1,j2] + a1a3[j1,j3] + a2a3[j2,j3] + a1a2a3[j1,j2,j3]  # cell means 
-} } }
-b0 <- mean( m[1:2,1:2,1:2] )
-for ( j1 in 1:2 ) { b1[j1] <- mean( m[j1,1:2,1:2] ) - b0 }
-for ( j2 in 1:2 ) { b2[j2] <- mean( m[1:2,j2,1:2] ) - b0 }
-for ( j3 in 1:2 ) { b3[j3] <- mean( m[1:2,1:2,j3] ) - b0 }
+for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j3 in 1:2 ) { for (js in 1:NSubj){
+mm[j1,j2,j3,js] <- a0 + a1[j1] + a2[j2] + a3[j3] + aS[js] +
+a1a2[j1,j2] + a1a3[j1,j3] + a2a3[j2,j3] + a1a2a3[j1,j2,j3] +
+a1aS[j1,js] + a2aS[j2,js] + a3aS[j3,js] +      
+a1a2aS[j1,j2,js] + a1a3aS[j1,j3,js] + a2a3aS[j2,j3,js] + 
+a1a2a3aS[j1,j2,j3,js] 
+# cell means 
+} } } }
+
+b0 <- mean( mm[1:2,1:2,1:2,1:NSubj] )
+for ( j1 in 1:2 ) { b1[j1] <- mean( mm[j1,1:2,1:2,1:NSubj] ) - b0 }
+for ( j2 in 1:2 ) { b2[j2] <- mean( mm[1:2,j2,1:2,1:NSubj] ) - b0 }
+for ( j3 in 1:2 ) { b3[j3] <- mean( mm[1:2,1:2,j3,1:NSubj] ) - b0 }
+for ( js in 1:NSubj ) { bS[js] <- mean( mm[1:2,1:2,1:2,js] ) - b0 }
+
+for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j3 in 1:2 ) { 
+m[j1,j2,j3]<- mean(mm[j1,j2,j3,1:NSubj])
+}}}
 
 for ( j1 in 1:2 ) { for ( j2 in 1:2 ) {
-b1b2[j1,j2] <- mean(m[j1,j2,1:2]) - ( b0 + b1[j1] + b2[j2] )
+b1b2[j1,j2] <- mean(mm[j1,j2,1:2,1:NSubj]) - ( b0 + b1[j1] + b2[j2] )
 }}
 
 for ( j1 in 1:2 ) { for ( j3 in 1:2) {
-b1b3[j1,j3] <- mean(m[j1,1:2,j3]) - ( b0 + b1[j1] + b3[j3] )
+b1b3[j1,j3] <- mean(mm[j1,1:2,j3,1:NSubj]) - ( b0 + b1[j1] + b3[j3] )
 }}
 
 for ( j2 in 1:2 ) { for ( j3 in 1:2 ) {
-b2b3[j2,j3] <- mean(m[1:2,j2,j3]) - ( b0 + b2[j2] + b3[j3] )
+b2b3[j2,j3] <- mean(mm[1:2,j2,j3,1:NSubj]) - ( b0 + b2[j2] + b3[j3] )
 }}
 
 for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j3 in 1:2 ) {
-b1b2b3[j1,j2,j3] <- m[j1,j2,j3] - ( b0 + b1[j1] + b2[j2] + b1[j3] + b1b2[j1,j2] + b1b3[j1,j3] + b2b3[j2,j3] )
+b1b2b3[j1,j2,j3] <- m[j1,j2,j3] - ( b0 + b1[j1] + b2[j2] + b3[j3] + b1b2[j1,j2] + b1b3[j1,j3] + b2b3[j2,j3] )
 }}}
 }
 " # close quote for modelstring

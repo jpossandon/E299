@@ -10,8 +10,8 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
     contrast       <- matrix(contrastList[[cIdx]], nrow=1) # make it a row matrix
     conmat[cIdx,]  <- contrast %*% Sample
   }
-  
-  openGraph(width=3.2*contPplot[2] , height=3.2/3*contPplot[1])
+  openGraph(width = 3.5/2, height = 3)
+  #openGraph(width=3.2*contPplot[2] , height=3.2/3*contPplot[1])
   pltList     <- list()
   # from here the individual plots
   for ( cIdx in 1:nContrasts) {
@@ -26,7 +26,7 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
     negLimY     <- -.6
     if (SData){
       ylims   <-c(negLimY*maxContdens,maxContdens)}else{
-        ylims   <-c(0,maxContdens)}
+        ylims   <-c(0,maxContdens+maxContdens*.1)}
     print(ylims)
     
     #contrast  = matrix( contrastList[[cIdx]], nrow=1) # make it a row matrix
@@ -66,6 +66,7 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
             axis.line.x         = element_line(color="black"),
             axis.text.y         = element_blank(),
             axis.ticks.y        = element_blank(),
+            axis.text.x         = element_blank(),
             axis.title.y        = element_blank(),
             panel.grid.major.y  = element_blank(),
             panel.grid.minor.y  = element_blank(),
@@ -80,17 +81,17 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
       geom_point(data = NULL,x=mean(auxdata),y=max(densCurve$y),shape=21,
                  colour = "#000000",fill='red', size = .75,stroke=.2)+
       geom_text(data = NULL, x = mean(auxdata), y = max(densCurve$y),
-                hjust=-.7,vjust=.8, size=1.5,family="Helvetica",
-                label = sprintf("%1.3f",mean(auxdata)))+
+                hjust=-.3,vjust=.4, size=2.5,family="Helvetica",
+                label = formatC(mean(auxdata),digits = 1, format = "f", drop0trailing = TRUE))+
       geom_text(data = NULL, x = HDIxtext[1], y = hdy,
-                hjust=1,vjust=0, size=1.5,family="Helvetica",
-                label = sprintf("%1.3f",HDI[1]))+
+                hjust=1,vjust=0, size=2.5,family="Helvetica",
+                label = formatC(HDI[1],digits = 1, format = "f", drop0trailing = TRUE))+
       geom_text(data = NULL, x = HDIxtext[2], y = hdy,
-                hjust=0,vjust=0, size=1.5,family="Helvetica",
-                label = sprintf("%1.3f",HDI[2]))+
-      geom_text(data = NULL, x = xlms[1]+.01*(xlms[2]-xlms[1]), y = 0+.7*ylims[2],#+.8*max(ylims),
-                hjust=0,vjust=1, size=2,family="Helvetica",
-                label = ttl)+
+                hjust=0,vjust=0, size=2.5,family="Helvetica",
+                label = formatC(HDI[2],digits = 1, format = "f", drop0trailing = TRUE))+
+      # geom_text(data = NULL, x = xlms[1]+.01*(xlms[2]-xlms[1]), y = 0+.7*ylims[2],#+.8*max(ylims),
+      #           hjust=0,vjust=1, size=1,family="Helvetica",
+      #           label = ttl)+
       scale_y_continuous(limits=ylims,expand = c(0, 0))+
       geom_hline(yintercept = 0)+
       scale_x_continuous(limits=xlms[1:2],expand = c(0, 0),breaks=round(seq(xlms[1],xlms[2],by=xlms[3])*1000)/1000)
@@ -112,11 +113,11 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
     if(xlms[1]<0 & xlms[2]>0){
       p1$layers <- c(geom_line(data=data.frame(x=c(0,0),y=.8*ylims),aes(x,y),color="black",linetype = "dotted", size=.4),p1$layers)
     }
-    if (cIdx %in% seq(from = contPplot[1], to = prod(contPplot), by = contPplot[1]) | length(diffplot)>1){
+    if (cIdx %in% seq(from = contPplot[1], to = prod(contPplot), by = contPplot[1]) ){ #| length(diffplot)>1
       p1 <- p1 +
         theme(#axis.text.x  = element_blank(),     # if we keep the number the proportions of the las plot will be wrong
               axis.line.x = element_blank(),
-              #axis.ticks.x = element_blank(),
+             # axis.ticks.x = element_blank(),
               axis.title.x = element_blank()) # unfortunately if we add the title in the last line the proportions of the last plot change
     }else{
          p1 <- p1 +
@@ -128,5 +129,8 @@ multiPlot <- function(Sample,contrastList,cbbPalette,
     
     pltList[[cIdx]] <- p1
   }
-  do.call(grid.arrange, c(pltList, nrow=contPplot[1], ncol=contPplot[2], as.table = FALSE)) 
+  #grid.arrange(pltList, nrow=contPplot[1], ncol=contPplot[2], as.table = FALSE)
+  do.call(grid.arrange, c(pltList, nrow=contPplot[1], ncol=contPplot[2], as.table = FALSE))
+return(pltList)
+  #  ggsave(file = "whatever.pdf", arrangeGrob(grobs = pltList, nrow=contPplot[1], ncol=contPplot[2])) 
 }

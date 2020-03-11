@@ -44,7 +44,11 @@ for e = 1:4
          'MarkerFaceColor',cmap2(e,:),'MarkerEdgeColor',[0 0 0],...
          'LineWidt',2,'MarkerSize',10);
 end
-title(sprintf('N = %d',size(stat_avgdB,3)))
+if strcmp(task,'LH3cross')
+    title(sprintf('N = %d (%d from exp. 1-2)',size(stat_avgdB,3),sum(unique(allData.subjIndx)<71)))
+else
+    title(sprintf('N = %d',size(stat_avgdB,3)))
+end
 axis([0.75 2.25 0 1])
 set(gca,'XTick',1:2,'XTickLabel',{'External','Anatomical'},'FontSize',16)
 legend(hhh,{' || legs  || hands',' || legs  X hands',' X legs  || hands',' X legs  X hands'},...

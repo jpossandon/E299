@@ -1,14 +1,14 @@
 modelstring = "
 model {
 for ( i in 1:Ndata ) {
-#y[i] ~ dt( mu[i] ,1/(ySigma[task[i],LegC[i],HandC[i]])^2, nu)
-y[i] ~ dnorm( mu[i] ,1/(ySigma[task[i],LegC[i],HandC[i]])^2)
-mu[i] <- a0 + a1[task[i]] + a2[LegC[i]] + a3[HandC[i]]  +  aS[S[i]] +        # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
-a1a2[task[i],LegC[i]] + a1a3[task[i],HandC[i]] + a2a3[LegC[i],HandC[i]] + 
-a1a2a3[task[i],LegC[i],HandC[i]] +
-a1aS[task[i],S[i]] + a2aS[LegC[i],S[i]] + a3aS[HandC[i],S[i]] +         # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
-a1a2aS[task[i],LegC[i],S[i]] + a1a3aS[task[i],HandC[i],S[i]] + a2a3aS[LegC[i],HandC[i],S[i]] + 
-a1a2a3aS[task[i],LegC[i],HandC[i],S[i]] 
+#y[i] ~ dt( mu[i] ,1/(ySigma[RespM[i],LegC[i],HandC[i]])^2, nu)
+y[i] ~ dnorm( mu[i] ,1/(ySigma[RespM[i],LegC[i],HandC[i]])^2)
+mu[i] <- a0 + a1[RespM[i]] + a2[LegC[i]] + a3[HandC[i]]  +  aS[S[i]] +        # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
+a1a2[RespM[i],LegC[i]] + a1a3[RespM[i],HandC[i]] + a2a3[LegC[i],HandC[i]] + 
+a1a2a3[RespM[i],LegC[i],HandC[i]] +
+a1aS[RespM[i],S[i]] + a2aS[LegC[i],S[i]] + a3aS[HandC[i],S[i]] +         # this is the full model with all interaction, included the interaction with the subject factor, this is only possible for when there is multiple data points per subject per cell 
+a1a2aS[RespM[i],LegC[i],S[i]] + a1a3aS[RespM[i],HandC[i],S[i]] + a2a3aS[LegC[i],HandC[i],S[i]] + 
+a1a2a3aS[RespM[i],LegC[i],HandC[i],S[i]] 
 }
 #
 #nu <- nuMinusOne+1
@@ -161,7 +161,7 @@ b2b3[j2,j3] <- mean(mm[1:2,j2,j3,1:NSubj]) - ( b0 + b2[j2] + b3[j3] )
 }}
 
 for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j3 in 1:2 ) {
-b1b2b3[j1,j2,j3] <- m[j1,j2,j3] - ( b0 + b1[j1] + b2[j2] + b1[j3] + b1b2[j1,j2] + b1b3[j1,j3] + b2b3[j2,j3] )
+b1b2b3[j1,j2,j3] <- m[j1,j2,j3] - ( b0 + b1[j1] + b2[j2] + b3[j3] + b1b2[j1,j2] + b1b3[j1,j3] + b2b3[j2,j3] )
 }}}
 }
 " # close quote for modelstring

@@ -2,7 +2,7 @@ library(gridExtra)
 
 chainLength = length(mcmcChain[, "b0" ])
 
-source("code/analysis/rcode/plotting/multiPlot.R")
+source("05_code/02_analysis/rcode/plotting/multiPlot.R")
 
 if(model=="Lc_Hc_cLxL"){
   

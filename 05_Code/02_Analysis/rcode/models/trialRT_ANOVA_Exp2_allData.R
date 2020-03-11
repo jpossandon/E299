@@ -320,7 +320,7 @@ b3b4[j3,j4] <- mean(mm[1:2,1:2,j3,j4,1:NSubj]) - ( b0 + b3[j3] + b4[j4] )
 }}
 
 for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j3 in 1:2 ) {
-b1b2b3[j1,j2,j3] <- mean(m[j1,j2,j3,1:2]) - ( b0 + b1[j1] + b2[j2] + b1[j3] + b1b2[j1,j2] + b1b3[j1,j3] + b2b3[j2,j3] )
+b1b2b3[j1,j2,j3] <- mean(m[j1,j2,j3,1:2]) - ( b0 + b1[j1] + b2[j2] + b3[j3] + b1b2[j1,j2] + b1b3[j1,j3] + b2b3[j2,j3] )
 }}}
 
 for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j4 in 1:2 ) {
@@ -336,7 +336,7 @@ b2b3b4[j2,j3,j4] <- mean(m[1:2,j2,j3,j4]) - ( b0 + b2[j2] + b3[j3] + b4[j4] + b2
  }}}
  
  for ( j1 in 1:2) { for ( j2 in 1:2 ) { for ( j3 in 1:2 ) { for ( j4 in 1:2 ) {
- b1b2b3b4[j1,j2,j3,j4] <- m[j1,j2,j3,j4] - ( b0 + b1[j1] + b2[j2] + b3[j3] + b4[j4] + b1b2[j1,j2] + b1b3[j1,j3] + b2b3[j2,j3] + b2b4[j2,j4] + b3b4[j3,j4] + b1b2b3[j1,j2,j3] + b1b2b4[j1,j2,j4] + b2b3b4[j2,j3,j4] + b1b3b4[j1,j3,j4] )
+ b1b2b3b4[j1,j2,j3,j4] <- m[j1,j2,j3,j4] - ( b0 + b1[j1] + b2[j2] + b3[j3] + b4[j4] + b1b2[j1,j2] + b1b3[j1,j3] +  b1b4[j1,j4] + b2b3[j2,j3] + b2b4[j2,j4] + b3b4[j3,j4] + b1b2b3[j1,j2,j3] + b1b2b4[j1,j2,j4] + b2b3b4[j2,j3,j4] + b1b3b4[j1,j3,j4] )
  }}}}
 
 }

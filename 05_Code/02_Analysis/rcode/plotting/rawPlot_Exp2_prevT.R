@@ -7,8 +7,15 @@ gap         <- 1.5
 xlims       <- c(0,10.5)
 xpos[xpos>4]<- xpos[xpos>4]+gap
 jitterVal   <- runif(length(unique(datFrame$subjIndx)), max = 0.1)-.05
-tsks        <- c("Normal","Anti")
-for (t in c(1:2)){
+if (exp==1){
+  tsks        <- c("Normal")}
+if (exp==2){
+  tsks        <- c("Normal","Anti")}
+if(exp==3){
+  tsks        <- c("LH","HL")}
+if (exp==4){
+  tsks        <- c("Normal")}
+for (t in 1:length(tsks)){
   datFrameaux = subset(datFrame,task==t)
   
   dat1    = ddply(datFrameaux, .(subjIndx,cond,prevT), summarize,  meanRT=mean(trial_RT[areOK], na.rm=T), median=median(trial_RT[areOK], na.rm=T))
@@ -82,7 +89,7 @@ for (t in c(1:2)){
     ggtitle(sprintf('N = %d',length(unique(datFrameaux$subjIndx))))
     
   print(p1)
-  saveGraph(file=paste(getwd(),"/figures/",pathfig[t],"/allSubjMeansbyprev",tsks[t],sep=""), type="pdf")
+  saveGraph(file=paste(getwd(),"/07_Analyses/",pathfig[t],"/allSubjMeansbyprev",tsks[t],sep=""), type="pdf")
   
    
   
