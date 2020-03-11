@@ -1,0 +1,11 @@
+model{
+  for ( i in 1:nTotal ) {
+     y[i] ~ dt( mu[cond[i]] , 1/sigma[cond[i]]^2 , nu )
+  }
+  for ( j in 1:nCond ) {
+    mu[j] ~ dnorm(MPriormean, 1/(MPriorstd)^2) 
+    sigma[j] ~ dunif(SPriorL, SPriorH )
+  }
+  nu <- nuMinusOne+1
+  nuMinusOne ~ dexp(1/29)
+}

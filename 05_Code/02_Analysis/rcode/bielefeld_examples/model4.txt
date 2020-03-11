@@ -1,0 +1,33 @@
+
+model {
+  for ( i in 1:nTotal ) {
+    y[i]  ~ dnorm( mu[i] , 1/sigma^2)
+    #mu[i] <- a0 + a1[cond[i]] + aS[subj[i]]
+    # folowwing lines are for model comparison
+    mucond[i] <- a0 + a1[cond[i]] + aS[subj[i]]
+    mucond2[i] <- a0 + a1[cond2[i]]  + aS[subj[i]]
+    mu[i]  <- equals(mC,1)*mucond[i] + equals(mC,2)*mucond2[i]
+    }
+  sigma ~ dunif(SPriorL, SPriorH )
+  a0 ~ dnorm(MPriormean,1/MPriorstd^2)
+  
+  for ( j in 1:nCond ) { 
+    a1[j] ~ dnorm(0, 1/(aSigma)^2) 
+    }
+  aSigma ~ dgamma( aGammaShRa[1] , aGammaShRa[2] ) 
+
+  for ( j in 1:nSubj ) { aS[j] ~ dnorm( 0.0 , 1/(sSigma)^2 ) }
+  sSigma ~ dgamma( aGammaShRa[1] , aGammaShRa[2] ) 
+
+ # Convert a0,a[] to sum-to-zero b0,b[] :
+  for ( j in 1:nCond ) { for (s in 1:nSubj){
+            m[j,s] <- a0 + a1[j] + aS[s] }} # cell means 
+  b0 <- mean( m[1:nCond,1:nSubj] )
+  for ( jS in 1:nSubj ) { bS[jS] <- mean( m[1:nCond, jS] ) - b0}
+  for ( jC in 1:nCond ) { b1[jC] <- mean( m[jC,1:nSubj] ) - b0}
+  
+  # this is for model comparison
+    mC ~ dcat( mPriorProb[] )
+    mPriorProb[1] <- .5
+    mPriorProb[2] <- .5
+}

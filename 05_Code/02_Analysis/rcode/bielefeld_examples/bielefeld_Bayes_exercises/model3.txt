@@ -1,0 +1,19 @@
+
+model {
+  for ( i in 1:nTotal ) {
+    y[i]  ~ dnorm( mu[i] , 1/sigma^2)
+    mu[i] <- a0 + a1[cond[i]]
+}
+  sigma ~ dunif(SPriorL, SPriorH )
+  a0 ~ dnorm(MPriormean,1/MPriorstd^2)
+  
+for ( j in 1:nCond ) { 
+    a1[j] ~ dnorm(0, 1/(aSigma)^2) 
+    }
+  aSigma ~ dgamma( aGammaShRa[1] , aGammaShRa[2] ) 
+ 
+ # Convert a0,a[] to sum-to-zero b0,b[] :
+  for ( j in 1:nCond ) { m[j] <- a0 + a1[j] } # cell means 
+  b0 <- mean( m[1:nCond] )
+  for ( j in 1:nCond ) { b1[j] <- m[j] - b0 }
+}

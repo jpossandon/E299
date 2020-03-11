@@ -1,0 +1,7 @@
+model{
+  for ( i in 1:nTotal ) {
+    y[i] ~ dnorm(mu, 1/sigma^2)    
+  }
+  mu ~ dnorm(MPriormean, 1/(MPriorstd)^2) 
+  sigma ~ dunif(SPriorL, SPriorH )
+}
